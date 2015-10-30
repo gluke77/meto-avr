@@ -69,23 +69,11 @@ int main(void)
 	GLOBAL_INT_ENABLE;
 
 	beep_ms(1000);
-	delay_ms(500);
+	_delay_ms(500);
 	beep_ms(200);
-	delay_ms(200);
+	_delay_ms(200);
 	beep_ms(200);
-	delay_ms(200);
-
-/*
-	START_CLOCK;
-	
-	while (!KEY_PRESSED(0));
-	YEAR = 8;
-	MONTH = 4;
-	D_MONTH = 1;
-	HOURS = 20;
-	MINUTES = 03;
-	SECONDS = 0;
-*/	
+	_delay_ms(200);
 
 	lcd_init();
 
@@ -102,7 +90,7 @@ int main(void)
 		do_shift();
 		do_lcd();
 
-		delay_ms(100);
+		_delay_ms(100);
 	}
 
 	return 0;

@@ -1,7 +1,7 @@
 #if !defined __COMMON_H_INCLUDED_
 #define __COMMON_H_INCLUDED_
 
-#define FW_VERSION	("20081124")
+#define FW_VERSION	("20081127")
 
 #define TRUE 1
 #define FALSE 0

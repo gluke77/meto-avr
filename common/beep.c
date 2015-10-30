@@ -18,7 +18,7 @@ void beep_timer_ms(uint16_t delay)
 {
 	GLOBAL_INT_DISABLE;
 	BEEP_ON;
-	if (timers[1] < delay)
+	if ((timers[1] < delay) || (0xFFFF == timers[1]))
 		timers[1] = delay;
 	GLOBAL_INT_ENABLE;
 }

@@ -57,24 +57,14 @@ int main(void)
 	GLOBAL_INT_ENABLE;
 
 	beep_ms(1000);
-	delay_ms(500);
+	_delay_ms(500);
 	beep_ms(200);
-	delay_ms(200);
+	_delay_ms(200);
 	beep_ms(200);
-	delay_ms(200);
+	_delay_ms(200);
 
 	lcd_init();
-/*
-	for(;;)
-	{
-		controls = 0xAA;
-		do_shift();
-		delay_ms(1000);
-		controls = 0x55;
-		do_shift();
-		delay_ms(500);
-	}
-*/	
+
 	for (;;)
 	{
 		do_kbd();
