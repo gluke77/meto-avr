@@ -48,7 +48,7 @@ void lcd_puts(uint8_t /* line */, const char * /* msg */);
 void lcd_puts_(const char * /* msg */);
 void do_lcd(void);
 	
-#define LCD_TIMEOUT	(5)
+#define LCD_TIMEOUT	(1)
 
 extern char lcd_line0[40];
 extern char lcd_line1[40];

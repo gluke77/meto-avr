@@ -46,6 +46,7 @@ uint8_t		master_device_id = 0;
 uint8_t		secondary_device_id = 0;
 uint16_t	usart_error_count = 0;
 uint8_t		usart_last_error = 0;
+uint16_t	usart_good_count = 0;
 uint32_t	foil_encoder_pulse_count = 0;
 uint16_t	g_pnevmo_pulse_duration = 2000;
 uint8_t		g_empty_bath_state = 0;
@@ -55,8 +56,8 @@ int main(void)
 {
 	EXT_MEM_INIT;
 	
-	usart1_init(USART_RS485_MASTER, 38400);
-	usart1_setprotocol_modbus();
+	usart0_init(USART_RS485_MASTER, 38400);
+	usart0_setprotocol_modbus();
 
 	timer_init();
 	shift_init();
@@ -80,11 +81,11 @@ int main(void)
 	START_CLOCK;
 	
 	while (!KEY_PRESSED(0));
-	YEAR = 5;
+	YEAR = 8;
 	MONTH = 4;
 	D_MONTH = 1;
-	HOURS = 10;
-	MINUTES = 49;
+	HOURS = 20;
+	MINUTES = 03;
 	SECONDS = 0;
 */	
 
@@ -103,7 +104,7 @@ int main(void)
 		do_shift();
 		do_lcd();
 
-		delay_ms(50);
+		delay_ms(100);
 	}
 
 	return 0;
@@ -377,7 +378,7 @@ void process_secondary(void)
 	
 	static uint16_t old_secondary_soft_controls = 0;
 	
-	static uint16_t good_count = 0;
+	uint16_t good_count = 0;
 	
 	uint16_t secondary_soft_controls = soft_controls >> 8;
 	
@@ -398,13 +399,13 @@ void process_secondary(void)
 	
 	modbus_cmd2msg(&cmd, msg, MODBUS_MAX_MSG_LENGTH);
 
-	res = usart1_cmd(msg, msg, MODBUS_MAX_MSG_LENGTH, 300);
+	res = usart0_cmd(msg, msg, MODBUS_MAX_MSG_LENGTH, 300);
 	
 	if (RESULT_OK == res)
 	{
 		res = modbus_msg2cmd(msg, &cmd);
 		
-		usart1_msg_ready = 0;
+		usart0_msg_ready = 0;
 		
 		if (RESULT_OK == res)
 		{
@@ -419,9 +420,10 @@ void process_secondary(void)
 		else
 		{
 			//todo: process bad ack here
+			usart_good_count = good_count;
 			good_count = 0;
 			usart_error_count++;
-			beep_ms(20);
+			beep_ms(20); 
 			usart_last_error = res;
 		}
 	}
@@ -429,6 +431,7 @@ void process_secondary(void)
 	{
 		// todo : process secondary error
 
+		usart_good_count = good_count;
 		good_count = 0;
 		beep_ms(20);
 		usart_error_count++;

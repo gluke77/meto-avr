@@ -15,6 +15,7 @@
 #include "../common/beep.h"
 #include "usb.h"
 #include "../common/meto.h"
+#include "clock.h"
 
 void menu_items_init(void)
 {
@@ -48,6 +49,7 @@ void menu_items_init(void)
 	menu_items[MENU_MODE_LINK][3] = menu_work_pump;
 	menu_items[MENU_MODE_LINK][4] = menu_fillup_pump;
 	menu_items[MENU_MODE_LINK][5] = menu_debug;
+	menu_items[MENU_MODE_LINK][5] = menu_clock;
 }
 
 void menu_common(void)
@@ -272,8 +274,8 @@ extern uint8_t secondary_sensors;
 
 void menu_start(void)
 {
-	sprintf(lcd_line0, "лерюккнонкхлеп-5");
-	sprintf(lcd_line1, "лор 125         ");
+	sprintf(lcd_line0, "нюн моо яхярелю ");
+	sprintf(lcd_line1, "     клор-2     ");
 	
 	menu_common();
 }
@@ -745,11 +747,12 @@ void menu_usb(void)
 
 extern uint16_t usart_error_count;
 extern uint8_t usart_last_error;
+extern uint16_t usart_good_count;
 
 void menu_usart(void)
 {
 	sprintf(lcd_line0,"ньхайх беднлнцн ");
-	sprintf(lcd_line1,"%d %d               ", usart_error_count, usart_last_error);
+	sprintf(lcd_line1,"%d %d %d            ", usart_error_count, usart_last_error, usart_good_count);
 		
 	menu_common();
 }
@@ -841,3 +844,26 @@ void menu_debug(void)
 		
 	menu_common();
 }
+
+void menu_clock(void)
+{
+	uint8_t	yr;
+	uint8_t	mnth;
+	uint8_t	d;
+	uint8_t	hh;
+	uint8_t	mm;
+	uint8_t	ss;
+	
+	yr = YEAR;
+	mnth = MONTH;
+	d = D_MONTH;
+	hh = HOURS;
+	mm = MINUTES;
+	ss = SECONDS;
+	
+	sprintf(lcd_line0, "%02d-%02d-%02d                          ", d, mnth, yr);
+	sprintf(lcd_line1, "%02d:%02d:%02d                          ", hh, mm, ss);
+	
+	menu_common();
+}
+

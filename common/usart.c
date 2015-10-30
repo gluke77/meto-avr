@@ -212,6 +212,7 @@ void usart1_read(void)
 	}
 }
 
+
 SIGNAL(SIG_UART0_RECV)
 {
 	uint8_t	byte;
@@ -299,6 +300,9 @@ result_e usart0_cmd(uint8_t * req, uint8_t * ack, size_t ack_size, uint16_t dela
 	result_e		res;
 	uint8_t			timer_id;
 	uint8_t			idx;
+	
+	char	buf[50];
+	
 	
 	if (USART_RS485_SLAVE == usart0_getmode())
 		usart0_write();
@@ -441,12 +445,6 @@ void usart0_rx_byte_modbus(uint8_t byte)
 	}
 }
 
-/*
-#ifdef _MASTER
-#include "../master/usb.h"
-#endif	
-*/
-
 void usart1_rx_byte_modbus(uint8_t byte)
 {
 	if (':' == byte)
@@ -470,15 +468,6 @@ void usart1_rx_byte_modbus(uint8_t byte)
 		usart1_inbuf_pos = 0;
 		usart1_msg_ready = 0;
 	}
-/*
-#ifdef _MASTER
-
-	usb_putchar(byte);
-
-//	if (usart1_msg_ready)
-//		usb_puts("\nReady\n");
-#endif	
-*/	
 }
 
 void usart0_rx_byte_101(uint8_t byte)
