@@ -19,9 +19,6 @@
 #include "../common/menu.h"
 #include "menu_items.h"
 
-volatile uint8_t		kbd_timeout = 10;
-
-
 char	ch, x, y;
 char	buf[50];
 
@@ -48,6 +45,8 @@ uint8_t		secondary_device_id = 0;
 uint16_t	usart_error_count = 0;
 uint8_t		usart_last_error = 0;
 uint32_t	foil_encoder_pulse_count = 0;
+uint16_t	g_pnevmo_pulse_duration = 2000;
+uint8_t		g_empty_bath_state = 0;
 
 int main(void)
 {
@@ -100,7 +99,7 @@ int main(void)
 		process_secondary();
 		process_sensors();
 		process_soft_controls();
-
+		process_water();
 //		do_sensor();
 		do_shift();
 		do_lcd();
@@ -133,15 +132,30 @@ void process_kbd()
 
 void process_soft_controls(void)
 {
+	static uint16_t old_drier_state = 0xFFFF;
+	static uint8_t drier_timer_id = 0;
+	
+	static uint16_t old_pressure_state = 0xFFFF;
+	static uint8_t pressure_timer_id = 0;
+	
+	static uint16_t old_sg_state = 0xFFFF;
+	static uint8_t sg_timer_id = 0;
+
+//////////////////////////////// cooler pump
+
 	if (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_PUMP))
 		CONTROL_ON(CONTROL_COOLER_PUMP);
 	else
 		CONTROL_OFF(CONTROL_COOLER_PUMP);
+
+//////////////////////////////// extruder pump
 		
 	if (TEST_SOFT_CONTROL(SOFT_CONTROL_EXTRUDER_PUMP))
 		CONTROL_ON(CONTROL_EXTRUDER_PUMP);
 	else
 		CONTROL_OFF(CONTROL_EXTRUDER_PUMP);	
+
+//////////////////////////////// germo
 
 	if (TEST_SOFT_CONTROL(SOFT_CONTROL_GERMO))
 	{
@@ -159,46 +173,121 @@ void process_soft_controls(void)
 		CONTROL_OFF(CONTROL_GERMO_CARRIAGE);
 	}
 	
-	if (TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))
+//////////////////////////////// pressure (air in tube)
+	
+	if (old_pressure_state != TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))
 	{
-		CONTROL_ON(CONTROL_PRESSURE_ON);
-		CONTROL_OFF(CONTROL_PRESSURE_OFF);
-		SOFT_CONTROL_ON(SOFT_LAMP_PRESSURE);
-	}
-	else
-	{
+		old_pressure_state = TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE);
+		
+		if (pressure_timer_id)
+		{
+			stop_timer(pressure_timer_id);
+			pressure_timer_id = 0;
+		}
+		
+		pressure_timer_id = start_timer(g_pnevmo_pulse_duration);
+		
 		CONTROL_OFF(CONTROL_PRESSURE_ON);
-		CONTROL_ON(CONTROL_PRESSURE_OFF);
-		SOFT_CONTROL_OFF(SOFT_LAMP_PRESSURE);
+		CONTROL_OFF(CONTROL_PRESSURE_OFF);
+		
+		if (TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))
+		{
+			CONTROL_ON(CONTROL_PRESSURE_ON);
+			SOFT_CONTROL_ON(SOFT_LAMP_GERMO);
+		}
+		else
+		{
+			CONTROL_ON(CONTROL_PRESSURE_OFF);
+			SOFT_CONTROL_OFF(SOFT_LAMP_GERMO);
+		}
 	}
+			
+	if (pressure_timer_id)
+		if (!timer_value(pressure_timer_id))
+		{
+			stop_timer(pressure_timer_id);
+			pressure_timer_id = 0;
+			
+			CONTROL_OFF(CONTROL_PRESSURE_ON);
+			CONTROL_OFF(CONTROL_PRESSURE_OFF);
+		}
+
+//////////////////////////////// sg
 	
-	if (TEST_SOFT_CONTROL(SOFT_CONTROL_SG))
+	if (old_sg_state != TEST_SOFT_CONTROL(SOFT_CONTROL_SG))
 	{
-		CONTROL_ON(CONTROL_HEAD_DOWN);
+		old_sg_state = TEST_SOFT_CONTROL(SOFT_CONTROL_SG);
+		
+		if (sg_timer_id)
+		{
+			stop_timer(sg_timer_id);
+			sg_timer_id = 0;
+		}
+		
+		sg_timer_id = start_timer(g_pnevmo_pulse_duration);
+		
 		CONTROL_OFF(CONTROL_HEAD_UP);
-	}
-	else
-	{
 		CONTROL_OFF(CONTROL_HEAD_DOWN);
-		CONTROL_ON(CONTROL_HEAD_UP);
+		
+		if (TEST_SOFT_CONTROL(SOFT_CONTROL_SG))
+			CONTROL_ON(CONTROL_HEAD_DOWN);
+		else
+			CONTROL_ON(CONTROL_HEAD_UP);
 	}
+			
+	if (sg_timer_id)
+		if (!timer_value(sg_timer_id))
+		{
+			stop_timer(sg_timer_id);
+			sg_timer_id = 0;
+			
+			CONTROL_OFF(CONTROL_HEAD_DOWN);
+			CONTROL_OFF(CONTROL_HEAD_UP);
+		}
+		
+//////////////////////////////// drier
 	
-	if (TEST_SOFT_CONTROL(SOFT_CONTROL_DRIER))
+	if (old_drier_state != TEST_SOFT_CONTROL(SOFT_CONTROL_DRIER))
 	{
-		CONTROL_ON(CONTROL_DRIER_ON);
-		CONTROL_OFF(CONTROL_DRIER_OFF);
-	}
-	else
-	{
+		old_drier_state = TEST_SOFT_CONTROL(SOFT_CONTROL_DRIER);
+		
+		if (drier_timer_id)
+		{
+			stop_timer(drier_timer_id);
+			drier_timer_id = 0;
+		}
+		
+		drier_timer_id = start_timer(g_pnevmo_pulse_duration);
+		
 		CONTROL_OFF(CONTROL_DRIER_ON);
-		CONTROL_ON(CONTROL_DRIER_OFF);
+		CONTROL_OFF(CONTROL_DRIER_OFF);
+		
+		if (TEST_SOFT_CONTROL(SOFT_CONTROL_DRIER))
+			CONTROL_ON(CONTROL_DRIER_ON);
+		else
+			CONTROL_ON(CONTROL_DRIER_OFF);
 	}
+			
+	if (drier_timer_id)
+		if (!timer_value(drier_timer_id))
+		{
+			stop_timer(drier_timer_id);
+			drier_timer_id = 0;
+			
+			CONTROL_OFF(CONTROL_DRIER_ON);
+			CONTROL_OFF(CONTROL_DRIER_OFF);
+		}
+
+////////////////////////////// cooler tube
 
 	if (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_TUBE))
 		CONTROL_ON(CONTROL_COOLER_TUBE);
 	else
 		CONTROL_OFF(CONTROL_COOLER_TUBE);
 }
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 
 void process_sensors(void)
 {
@@ -261,6 +350,9 @@ void process_sensors(void)
 		usb_cmd(msg, 0, 0, 0);
 	}
  }
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 
 void process_secondary(void)
 {
@@ -333,10 +425,16 @@ void process_secondary(void)
 	}
 }
 
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+
 void process_water(void)
 {
 	static uint8_t old_water_mode = 0;
 	static uint8_t water_action = WATER_ACTION_NOP;
+	
+	static uint8_t old_empty_bath_state = 1;
+	static uint8_t empty_bath_timer_id = 0;
 
 	uint8_t water_mode = GET_WATER_MODE;
 	
@@ -407,28 +505,60 @@ void process_water(void)
 	case WATER_ACTION_NOP:
 		CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
 		CONTROL_ON(CONTROL_WORK_BATH_PUMP);
-		CONTROL_ON(CONTROL_EMPTY_BATH_OFF);
-		CONTROL_OFF(CONTROL_EMPTY_BATH_ON);
+		g_empty_bath_state = 0;
 		break;
 
 	case WATER_ACTION_FILLUP:
 		CONTROL_ON(CONTROL_FILLUP_BATH_PUMP);
 		CONTROL_ON(CONTROL_WORK_BATH_PUMP);
-		CONTROL_ON(CONTROL_EMPTY_BATH_OFF);
-		CONTROL_OFF(CONTROL_EMPTY_BATH_ON);
+		g_empty_bath_state = 0;
 		break;
 
 	case WATER_ACTION_EMPTY:
 		CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
 		CONTROL_OFF(CONTROL_WORK_BATH_PUMP);
-		CONTROL_OFF(CONTROL_EMPTY_BATH_OFF);
-		CONTROL_ON(CONTROL_EMPTY_BATH_ON);
+		g_empty_bath_state = 1;
 		break;
 			
 	case WATER_ACTION_MANUAL:
 		break;
-	}	
+	}
+
+	if (old_empty_bath_state != g_empty_bath_state)
+	{
+		old_empty_bath_state = g_empty_bath_state;
+		
+		if (empty_bath_timer_id)
+		{
+			stop_timer(empty_bath_timer_id);
+			empty_bath_timer_id = 0;
+		}
+		
+		empty_bath_timer_id = start_timer(g_pnevmo_pulse_duration);
+		
+		CONTROL_OFF(CONTROL_EMPTY_BATH_ON);
+		CONTROL_OFF(CONTROL_EMPTY_BATH_OFF);
+		
+		if (g_empty_bath_state)
+			CONTROL_ON(CONTROL_EMPTY_BATH_ON);
+		else
+			CONTROL_ON(CONTROL_EMPTY_BATH_OFF);
+	}
+			
+	if (empty_bath_timer_id)
+		if (!timer_value(empty_bath_timer_id))
+		{
+			stop_timer(empty_bath_timer_id);
+			empty_bath_timer_id = 0;
+			
+			CONTROL_OFF(CONTROL_EMPTY_BATH_ON);
+			CONTROL_OFF(CONTROL_EMPTY_BATH_OFF);
+		}
+	
 }
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 
 void process_usb(void)
 {
@@ -491,6 +621,10 @@ void process_usb(void)
 		}
 	}
 }
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+
 void do_encoder(void)
 {
 	static uint8_t old_encoder_state = 0;
@@ -504,6 +638,10 @@ void do_encoder(void)
 		foil_encoder_pulse_count++;
 	}
 }
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+
 void process_encoder_counter(void)
 {
 	static uint32_t old_msec = 0;

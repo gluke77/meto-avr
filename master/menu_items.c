@@ -44,6 +44,9 @@ void menu_items_init(void)
 
 	menu_items[MENU_MODE_LINK][0] = menu_usb;
 	menu_items[MENU_MODE_LINK][1] = menu_usart;
+	menu_items[MENU_MODE_LINK][2] = menu_empty_bath;
+	menu_items[MENU_MODE_LINK][3] = menu_work_pump;
+	menu_items[MENU_MODE_LINK][4] = menu_fillup_pump;
 }
 
 void menu_common(void)
@@ -732,6 +735,73 @@ void menu_usart(void)
 	sprintf(lcd_line0,"ньхайх беднлнцн ");
 	sprintf(lcd_line1,"%d %d               ", usart_error_count, usart_last_error);
 		
+	menu_common();
+}
+
+extern uint8_t g_empty_bath_state;
+
+void menu_empty_bath(void)
+{
+	sprintf(lcd_line0,"якхб бюммш      ");
+	sprintf(lcd_line1,"%s                ", 
+		g_empty_bath_state?"бйкчвем":"бшйкчвем");
+		
+	if (KEY_PRESSED(KEY_ENTER))
+	{
+		CLEAR_KEY_PRESSED(KEY_ENTER);
+		
+		g_empty_bath_state ^= 0x01;
+		SET_WATER_MODE(WATER_MODE_MANUAL);
+	
+		beep_ms(50);
+	}
+	
+	menu_common();
+}
+
+void menu_work_pump(void)
+{
+	sprintf(lcd_line0,"мюяня жхпйскъжхх");
+	sprintf(lcd_line1,"%s                ", 
+		(TEST_CONTROL(CONTROL_WORK_BATH_PUMP))?"бйкчвем":"бшйкчвем");
+		
+	if (KEY_PRESSED(KEY_ENTER))
+	{
+		CLEAR_KEY_PRESSED(KEY_ENTER);
+		
+		if (TEST_CONTROL(CONTROL_WORK_BATH_PUMP))
+			CONTROL_OFF(CONTROL_WORK_BATH_PUMP);
+		else
+			CONTROL_ON(CONTROL_WORK_BATH_PUMP);
+			
+		SET_WATER_MODE(WATER_MODE_MANUAL);
+			
+		beep_ms(50);
+	}
+	
+	menu_common();
+}
+
+void menu_fillup_pump(void)
+{
+	sprintf(lcd_line0,"мюяня мюонкмемхъ");
+	sprintf(lcd_line1,"%s                ", 
+		(TEST_CONTROL(CONTROL_FILLUP_BATH_PUMP))?"бйкчвем":"бшйкчвем");
+		
+	if (KEY_PRESSED(KEY_ENTER))
+	{
+		CLEAR_KEY_PRESSED(KEY_ENTER);
+		
+		if (TEST_CONTROL(CONTROL_FILLUP_BATH_PUMP))
+			CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
+		else
+			CONTROL_ON(CONTROL_FILLUP_BATH_PUMP);
+			
+		SET_WATER_MODE(WATER_MODE_MANUAL);
+			
+		beep_ms(50);
+	}
+	
 	menu_common();
 }
 

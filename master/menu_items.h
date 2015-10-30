@@ -33,5 +33,8 @@ void menu_siren_mode(void);
 void menu_usb(void);
 void menu_usart(void);
 
+void menu_empty_bath(void);
+void menu_work_pump(void);
+void menu_fillup_pump(void);
 
 #endif /* _MENU_ITEMS_INCLUDED */
