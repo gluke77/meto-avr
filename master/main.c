@@ -48,15 +48,12 @@ uint8_t		usart_last_error = 0;
 uint32_t	foil_encoder_pulse_count = 0;
 uint16_t	g_pnevmo_pulse_duration = 2000;
 uint8_t		g_empty_bath_state = 0;
-uint8_t		g_encoder_on = 0;
-uint32_t	g_pl_state = 0;
+uint8_t		g_debug_mode = 0;
 
 int main(void)
 {
 	EXT_MEM_INIT;
 	
-//	usart0_init(USART_RS485_MASTER, 115200);
-//	usart0_setprotocol_sec();
 	usart1_init(USART_RS485_MASTER, 38400);
 	usart1_setprotocol_modbus();
 
@@ -68,7 +65,6 @@ int main(void)
 	beep_init();
 	menu_init();
 	menu_items_init();
-//	flash_init();
 	
 	GLOBAL_INT_ENABLE;
 
@@ -658,54 +654,18 @@ void process_usb(void)
 	}
 }
 
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-/*
-void do_encoder(void)
-{
-	static uint8_t old_encoder_state = 0;
-	uint8_t			encoder_state;
-	
-	encoder_state = TEST_SENSOR(SENSOR_FOIL_ENCODER);
-	
-	if (old_encoder_state != encoder_state)
-	{
-		old_encoder_state = encoder_state;
-		foil_encoder_pulse_count++;
-	}
-}
-*/
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-
-void process_encoder_counter(void)
-{
-	static uint32_t old_msec = 0;
-	uint32_t msec;
-	uint32_t delay;
-	
-	msec = timer_mseconds_total;
-	
-	if (old_msec > msec)
-		delay = 0xFFFFFFFF - old_msec + msec;
-	else
-		delay = msec - old_msec;
-		
-	old_msec = msec;
-	
-	// estimate delay/foil_encoder_pulse_count here
-	
-	foil_encoder_pulse_count = 0;
-}
+////////////////////////////
+////////////////////////////
 
 #define DEFAULT_ENCODER_MAX_TIME_COUNTER	(1000)
 #define ENCODER_MAX_PULSE_COUNTER			(10)
+
+
 
 void do_encoder(void)
 {
 	static uint16_t time_counter = 0;
 	static uint8_t pulse_counter = 0;
-	static uint8_t is_running = 0;
 	static uint16_t max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
 	
 	static uint8_t old_encoder_state = 0;
@@ -717,7 +677,7 @@ void do_encoder(void)
 	uint8_t		idx;
 	uint32_t	sum;
 	
-	encoder_state = TEST_SENSOR(SENSOR_FOIL_ENCODER);	
+	encoder_state = TEST_HARD_SENSOR(SENSOR_FOIL_ENCODER);	
 
 	time_counter++;
 	
@@ -725,7 +685,7 @@ void do_encoder(void)
 	{
 		old_encoder_state = encoder_state;
 		
-		if (is_running)
+		if (TEST_SENSOR(SENSOR_FOIL_ENCODER))
 		{
 			if (pulse_counter < ENCODER_MAX_PULSE_COUNTER)
 				pulse_counter++;
@@ -745,8 +705,7 @@ void do_encoder(void)
 			}
 		}
 		
-		g_encoder_on = 1;
-		is_running = 1;
+		SENSOR_ON(SENSOR_FOIL_ENCODER);
 		time_counter = 0;
 	}
 	else if (old_encoder_state && !encoder_state)
@@ -754,13 +713,12 @@ void do_encoder(void)
 
 	if (time_counter > max_time_counter)
 	{
-		is_running = 0;
-		g_encoder_on = 0;
+		SENSOR_OFF(SENSOR_FOIL_ENCODER);
 		pulse_counter = 0;
 		max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
 		array_pos = 0;
 		
-		if (SOFT_CONTROL_ON(SOFT_CONTROL_SG))
+		if (TEST_SOFT_CONTROL(SOFT_CONTROL_SG) && !g_debug_mode)
 		{
 			CONTROL_ON(CONTROL_HEAD_UP);
 			do_shift();
@@ -791,7 +749,7 @@ void do_pnevmoloaders(void)
 	
 	for (idx = 0; idx < PL_COUNT; idx++)
 	{
-		if (TEST_SENSOR(pl_id[idx]))
+		if (TEST_HARD_SENSOR(pl_id[idx]))
 			SETBIT(pl_state, idx);
 		else
 			CLEARBIT(pl_state, idx);
@@ -801,7 +759,7 @@ void do_pnevmoloaders(void)
 		{
 			if (TESTBIT(pl_state, idx))
 			{
-				SETBITL(g_pl_state, pl_id[idx]);
+				SENSOR_ON(pl_id[idx]);
 				pl_timer_count[idx] = 0;
 				SETBIT(old_pl_state, idx);
 			}
@@ -819,7 +777,7 @@ void do_pnevmoloaders(void)
 			else
 			{
 				pl_timer_count[idx] = 0;
-				CLEARBITL(g_pl_state, pl_id[idx]);
+				SENSOR_OFF(pl_id[idx]);
 			}
 		}
 	}	

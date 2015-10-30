@@ -64,7 +64,17 @@ int main(void)
 	delay_ms(200);
 
 	lcd_init();
-
+/*
+	for(;;)
+	{
+		controls = 0xAA;
+		do_shift();
+		delay_ms(1000);
+		controls = 0x55;
+		do_shift();
+		delay_ms(500);
+	}
+*/	
 	for (;;)
 	{
 		do_kbd();

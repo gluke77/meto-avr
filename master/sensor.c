@@ -2,13 +2,19 @@
 #include "..\common\common.h"
 #include "sensor.h"
 #include "shift.h"
+#include "..\common\meto.h"
 
-volatile uint8_t	soft_sensors[SENSOR_BANK_COUNT];
+volatile uint8_t	hard_sensors[SENSOR_BANK_COUNT];
 volatile uint8_t	sensors[SENSOR_BANK_COUNT];
 volatile uint8_t	tmp_sensors[SENSOR_BANK_COUNT];
 volatile uint8_t	sensor_value_1[SENSOR_BANK_COUNT];
 
-uint8_t				inverse_mask[SENSOR_BANK_COUNT];
+uint8_t				inverse_mask[SENSOR_BANK_COUNT];	// set 1 for sensors to be inverted
+uint8_t				copy_mask[SENSOR_BANK_COUNT];		// set 1 for hard_sensors
+														// NOT to be copied to sensors
+
+#define COPY_ON(idx)		(SETBIT(copy_mask[idx >> 3], (idx & 0x07)))
+#define COPY_OFF(idx)		(CLEARBIT(copy_mask[idx >> 3], (idx & 0x07)))
 
 void sensor_init(void)
 {
@@ -17,6 +23,17 @@ void sensor_init(void)
 	inverse_mask[0] = 0x00; //0x02; // 00000010
 	inverse_mask[1] = 0x00; //0xAA; // 10101010
 	inverse_mask[2] = 0x00;
+	
+	copy_mask[0] = 0x00;
+	copy_mask[1] = 0x00;
+	copy_mask[2] = 0x00;
+	
+	COPY_ON(SENSOR_FOIL_ENCODER);
+	COPY_ON(SENSOR_E2P_EMPTY);
+	COPY_ON(SENSOR_E2K_EMPTY);
+	COPY_ON(SENSOR_E3P_EMPTY);
+	COPY_ON(SENSOR_E3K_EMPTY);
+	COPY_ON(SENSOR_E3M_EMPTY);
 	
 	for (idx = 0; idx < SENSOR_BANK_COUNT; idx++)
 	{
@@ -151,9 +168,11 @@ void sensor_scan1(uint8_t bank_id)
 			SETBIT(tmp_sensors[bank_id], key_id);
 	}
 
-	sensors[bank_id] = (tmp_sensors[bank_id] & ~(inverse_mask[bank_id])) |
+	hard_sensors[bank_id] = (tmp_sensors[bank_id] & ~(inverse_mask[bank_id])) |
 		(~(tmp_sensors[bank_id]) & inverse_mask[bank_id]);
 
+	sensors[bank_id] &= copy_mask[bank_id];
+	sensors[bank_id] |= hard_sensors[bank_id] & ~copy_mask[bank_id];
 }
 
 void do_sensor(void)

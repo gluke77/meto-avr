@@ -21,12 +21,12 @@
 #define SENSOR_TIMEOUT		(7)
 
 #define TEST_SENSOR(idx)	(!TESTBIT(sensors[idx >> 3], (idx & 0x07)))
+#define SENSOR_ON(idx)		(CLEARBIT(sensors[idx >> 3], (idx & 0x07)))
+#define SENSOR_OFF(idx)		(SETBIT(sensors[idx >> 3], (idx & 0x07)))
 
-#define TEST_SOFT_SENSOR(idx)	(!TESTBIT(soft_sensors[idx >> 3], (idx & 0x07)))
-#define SOFT_SENSOR_ON(idx)		(CLEARBIT(soft_sensors[idx >> 3], (idx & 0x07)))
-#define SOFT_SENSOR_OFF(idx)	(SETBIT(soft_sensors[idx >> 3], (idx & 0x07)))
+#define TEST_HARD_SENSOR(idx)	(!TESTBIT(hard_sensors[idx >> 3], (idx & 0x07)))
 
-extern volatile uint8_t	soft_sensors[SENSOR_BANK_COUNT];
+extern volatile uint8_t	hard_sensors[SENSOR_BANK_COUNT];
 
 extern volatile uint8_t	sensors[SENSOR_BANK_COUNT];
 extern volatile uint8_t	stop_germo_led;

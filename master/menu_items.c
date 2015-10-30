@@ -47,6 +47,7 @@ void menu_items_init(void)
 	menu_items[MENU_MODE_LINK][2] = menu_empty_bath;
 	menu_items[MENU_MODE_LINK][3] = menu_work_pump;
 	menu_items[MENU_MODE_LINK][4] = menu_fillup_pump;
+	menu_items[MENU_MODE_LINK][5] = menu_debug;
 }
 
 void menu_common(void)
@@ -350,9 +351,6 @@ uint8_t	sensor_id[] =
 		SENSOR_SEC_REEL
 	};
 
-extern uint8_t		g_encoder_on;
-extern uint32_t	g_pl_state;
-
 void menu_scan_sensors(void)
 {
 	static uint8_t scan_mode_on = 1;
@@ -395,6 +393,8 @@ void menu_scan_sensors(void)
 				sensor = SENSOR_COUNT;
 				
 			sensor--;
+			
+			beep_ms(50);
 		}
 		
 		if (KEY_PRESSED(KEY_DOWN))
@@ -405,25 +405,14 @@ void menu_scan_sensors(void)
 			
 			if (SENSOR_COUNT <= sensor)
 				sensor = 0;
+				
+			beep_ms(50);
 		}
 	}
 	
 	sprintf(lcd_line0, "%s               ", sensor_text[sensor][0]);
 		
-	if (SENSOR_FOIL_ENCODER == sensor_id[sensor])
-		sprintf(lcd_line1, "%s               ",
-			(g_encoder_on)?sensor_text[sensor][1]:sensor_text[sensor][2]);
-			
-	else if ((SENSOR_E2P_EMPTY == sensor_id[sensor]) ||
-			(SENSOR_E2K_EMPTY == sensor_id[sensor]) ||
-			(SENSOR_E3P_EMPTY == sensor_id[sensor]) ||
-			(SENSOR_E3K_EMPTY == sensor_id[sensor]) ||
-			(SENSOR_E3M_EMPTY == sensor_id[sensor]))
-	
-		sprintf(lcd_line1, "%s                ",
-			(TESTBITL(g_pl_state, sensor_id[sensor]))?sensor_text[sensor][1]:sensor_text[sensor][2]);
-	
-	else if (sensor_id[sensor] < 24)
+	if (sensor_id[sensor] < 24)
 		sprintf(lcd_line1, "%s               ",
 			(TEST_SENSOR(sensor_id[sensor]))?sensor_text[sensor][1]:sensor_text[sensor][2]);
 	
@@ -821,3 +810,23 @@ void menu_fillup_pump(void)
 	menu_common();
 }
 
+extern uint8_t g_debug_mode;
+
+void menu_debug(void)
+{
+	sprintf(lcd_line0,"ÐÅÆÈÌ ÎÒËÀÄÊÈ   ");
+
+	sprintf(lcd_line1,"%s                ",
+		(g_debug_mode)?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
+		
+	if (KEY_PRESSED(KEY_ENTER))
+	{
+		CLEAR_KEY_PRESSED(KEY_ENTER);
+			
+		g_debug_mode ^= 0x01;
+			
+		beep_ms(50);
+	}
+		
+	menu_common();
+}

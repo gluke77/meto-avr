@@ -36,5 +36,6 @@ void menu_usart(void);
 void menu_empty_bath(void);
 void menu_work_pump(void);
 void menu_fillup_pump(void);
+void menu_debug(void);
 
 #endif /* _MENU_ITEMS_INCLUDED */
