@@ -661,7 +661,7 @@ void process_usb(void)
 
 #define DEFAULT_ENCODER_MAX_TIME_COUNTER	(1000)
 #define ENCODER_MAX_PULSE_COUNTER			(10)
-#define ENCODER_MIN_TIME_COUNTER			(50)
+#define ENCODER_MIN_TIME_COUNTER			(100)
 
 uint16_t max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
 
@@ -721,11 +721,13 @@ void do_encoder(void)
 	if (time_counter > max_time_counter)
 	{
 		SENSOR_OFF(SENSOR_FOIL_ENCODER);
+		
 		pulse_counter = 0;
 		max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
 		array_pos = 0;
 		
-		if (TEST_SOFT_CONTROL(SOFT_CONTROL_SG) && !g_debug_mode)
+		if (TEST_SOFT_CONTROL(SOFT_CONTROL_SG) &&
+			!g_debug_mode)
 		{
 			CONTROL_ON(CONTROL_HEAD_UP);
 			do_shift();

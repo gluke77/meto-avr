@@ -1,0 +1,103 @@
+термозоны х24
+	уставка (0 если выкл)
+	значение
+
+итого 48
+	
+инверторы 5 + 2
+	обороты (0 если выкл)
+	ток
+	для сг метры
+	для ту метры
+
+итого 22
+	
+давление 5
+
+итого 5
+
+генератор 1
+	частота
+	ток
+	мощность
+	температура
+	
+итого 4
+
+всего полей 79
++ 1 время
+
+всего 80 полей
+
+CREATE TABLE meto.process_log (
+  dateTime DATETIME NOT NULL DEFAULT 0,
+  e2pZone1Sv DOUBLE,
+  e2pZone1Pv DOUBLE,
+  e2pZone2Sv DOUBLE,
+  e2pZone2Pv DOUBLE,
+  e2pZone3Sv DOUBLE,
+  e2pZone3Pv DOUBLE,
+  e2pZone4Sv DOUBLE,
+  e2pZone4Pv DOUBLE,
+  e2pTraceSv DOUBLE,
+  e2pTracePv DOUBLE,
+
+  e2kZone1Sv DOUBLE,
+  e2kZone1Pv DOUBLE,
+  e2kZone2Sv DOUBLE,
+  e2kZone2Pv DOUBLE,
+  e2kZone3Sv DOUBLE,
+  e2kZone3Pv DOUBLE,
+  e2kTraceSv DOUBLE,
+  e2kTracePv DOUBLE,
+
+  e3kZone1Sv DOUBLE,
+  e3kZone1Pv DOUBLE,
+  e3kZone2Sv DOUBLE,
+  e3kZone2Pv DOUBLE,
+  e3kZone3Sv DOUBLE,
+  e3kZone3Pv DOUBLE,
+  e3kTraceSv DOUBLE,
+  e3kTracePv DOUBLE,
+
+  e3pZone1Sv DOUBLE,
+  e3pZone1Pv DOUBLE,
+  e3pZone2Sv DOUBLE,
+  e3pZone2Pv DOUBLE,
+  e3pZone3Sv DOUBLE,
+  e3pZone3Pv DOUBLE,
+  e3pZone4Sv DOUBLE,
+  e3pZone4Pv DOUBLE,
+  e3pTraceSv DOUBLE,
+  e3pTracePv DOUBLE,
+
+  e3mZone1Sv DOUBLE,
+  e3mZone1Pv DOUBLE,
+  e3mZone2Sv DOUBLE,
+  e3mZone2Pv DOUBLE,
+  e3mZone3Sv DOUBLE,
+  e3mZone3Pv DOUBLE,
+  e3mTraceSv DOUBLE,
+  e3mTracePv DOUBLE,
+
+  e2pRotate  DOUBLE,
+  e2pCurrent DOUBLE,
+  e2kRotate  DOUBLE,
+  e2kCurrent DOUBLE,
+  e3kRotate  DOUBLE,
+  e3kCurrent DOUBLE,
+  e3pRotate  DOUBLE,
+  e3pCurrent DOUBLE,
+  e3mRotate  DOUBLE,
+  e3mCurrent DOUBLE,
+  sgRotate   DOUBLE,
+  sgCurrent  DOUBLE,
+  sgSpeed    DOUBLE,
+  tuRotate   DOUBLE,
+  tuCurrent  DOUBLE,
+  tuSpeed    DOUBLE,
+
+
+  PRIMARY KEY(dateTime)
+)
+ENGINE = MYISAM;

@@ -39,9 +39,9 @@ SIGNAL(SIG_OUTPUT_COMPARE0)
 	if (1 == timers[1])
 		BEEP_OFF;
 #endif /* _BEEP_INCLUDED */
-			
+
 	do_timer();
-	
+
 	if (!timer_seconds_timeout--)
 	{
 		timer_seconds_total++;

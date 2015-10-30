@@ -128,7 +128,7 @@ void sensor_scan1(uint8_t bank_id)
 	uint8_t	key_id;
 	
 	sensor_value = SENSOR_PORT;
-
+/*
 	for (key_id = 0; key_id < 8; key_id++)
 	{
 		if (TESTBIT(sensor_value_1[bank_id], key_id) && 
@@ -168,8 +168,12 @@ void sensor_scan1(uint8_t bank_id)
 			SETBIT(tmp_sensors[bank_id], key_id);
 	}
 
-	hard_sensors[bank_id] = (tmp_sensors[bank_id] & ~(inverse_mask[bank_id])) |
-		(~(tmp_sensors[bank_id]) & inverse_mask[bank_id]);
+//	hard_sensors[bank_id] = (tmp_sensors[bank_id] & ~(inverse_mask[bank_id])) |
+//		(~(tmp_sensors[bank_id]) & inverse_mask[bank_id]);
+*/
+	hard_sensors[bank_id] = (sensor_value & ~(inverse_mask[bank_id])) |
+		(~(sensor_value) & inverse_mask[bank_id]);
+
 
 	sensors[bank_id] &= copy_mask[bank_id];
 	sensors[bank_id] |= hard_sensors[bank_id] & ~copy_mask[bank_id];
