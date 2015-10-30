@@ -10,32 +10,32 @@
 
 #if defined _MASTER
 
-#define SENSOR_BATH_WATER_LEVEL0		(11)
-#define SENSOR_BATH_WATER_LEVEL1		(9)
-#define SENSOR_TANK_WATER_LEVEL0		(15)
-#define SENSOR_TANK_WATER_LEVEL1		(13)
+#define SENSOR_BATH_WATER_LEVEL0		(13)
+#define SENSOR_BATH_WATER_LEVEL1		(15)
+#define SENSOR_TANK_WATER_LEVEL0		(9)
+#define SENSOR_TANK_WATER_LEVEL1		(11)
 
-#define SENSOR_HEAD_WATER		(12)
-#define SENSOR_E2_WATER			(14)	// 2x inner extruder complex
-#define SENSOR_E3_WATER			(1)		// 3x outer extruder complex
+#define SENSOR_HEAD_WATER		(10)
+#define SENSOR_E2_WATER			(8)		// 2x inner extruder complex
+#define SENSOR_E3_WATER			(7)		// 3x outer extruder complex
 
-#define SENSOR_GERMO_BEGIN		(8)
-#define SENSOR_GERMO_END		(10)
+#define SENSOR_GERMO_BEGIN		(14)
+#define SENSOR_GERMO_END		(12)
 
-#define BUTTON_BATH_PRESSURE	(5)
-#define BUTTON_BATH_GERMO		(3)
+#define BUTTON_BATH_PRESSURE	(3)
+#define BUTTON_BATH_GERMO		(5)
 
-#define BUTTON_STOP				(23)
-#define SENSOR_FOIL_ENCODER		(17)
-#define SENSOR_PRESSURE			(22)
-#define SENSOR_HEAD_UP			(0)
-#define SENSOR_HEAD_DOWN		(2)
+#define BUTTON_STOP				(17)
+#define SENSOR_FOIL_ENCODER		(23)
+#define SENSOR_PRESSURE			(16)
+#define SENSOR_HEAD_UP			(4)
+#define SENSOR_HEAD_DOWN		(6)
 
-#define SENSOR_E2P_EMPTY		(19)
-#define SENSOR_E2K_EMPTY		(21)
-#define SENSOR_E3M_EMPTY		(16)
-#define SENSOR_E3P_EMPTY		(18)
-#define SENSOR_E3K_EMPTY		(20)
+#define SENSOR_E2P_EMPTY		(21)
+#define SENSOR_E2K_EMPTY		(19)
+#define SENSOR_E3M_EMPTY		(22)
+#define SENSOR_E3P_EMPTY		(20)
+#define SENSOR_E3K_EMPTY		(18)
 
 #define SENSOR_END_OF_FOIL		(24)	// these are on secondary
 #define SENSOR_PRI_REEL			(25)
@@ -60,29 +60,29 @@
 
 // PUMPS
 
-#define	CONTROL_FILLUP_BATH_PUMP	(6)
-#define CONTROL_WORK_BATH_PUMP		(5)
-#define	CONTROL_COOLER_PUMP			(7)
-#define CONTROL_EXTRUDER_PUMP		(4)
+#define	CONTROL_FILLUP_BATH_PUMP	(5)
+#define CONTROL_WORK_BATH_PUMP		(6)
+#define	CONTROL_COOLER_PUMP			(4)
+#define CONTROL_EXTRUDER_PUMP		(7)
 
 // PNEVMO
 
-#define CONTROL_EMPTY_BATH_ON		(12)
-#define CONTROL_EMPTY_BATH_OFF		(13)
-#define CONTROL_GERMO_CARRIAGE		(0)
-#define CONTROL_GERMO_LOCK			(1)
-#define CONTROL_DRIER_ON			(2)
-#define CONTROL_DRIER_OFF			(3)
+#define CONTROL_EMPTY_BATH_ON		(15)
+#define CONTROL_EMPTY_BATH_OFF		(14)
+#define CONTROL_GERMO_CARRIAGE		(3)
+#define CONTROL_GERMO_LOCK			(2)
+#define CONTROL_DRIER_ON			(1)
+#define CONTROL_DRIER_OFF			(0)
 
-#define CONTROL_PRESSURE_ON			(10)
-#define CONTROL_PRESSURE_OFF		(11)
+#define CONTROL_PRESSURE_ON			(9)
+#define CONTROL_PRESSURE_OFF		(8)
 
-#define CONTROL_HEAD_UP				(9)
-#define CONTROL_HEAD_DOWN			(8)
+#define CONTROL_HEAD_UP				(10)
+#define CONTROL_HEAD_DOWN			(11)
 
 //
 
-#define CONTROL_COOLER_TUBE			(15)
+#define CONTROL_COOLER_TUBE			(12)
 
 // these are on secondary
 

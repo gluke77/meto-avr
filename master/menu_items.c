@@ -289,8 +289,6 @@ void menu_sensors(void)
 	menu_common();
 }
 
-// TODO: update scan sensors
-
 char * sensor_text[][3] =
 	{
 		{"бндю б бюммни-0  ", "дю", "мер"},
@@ -382,6 +380,29 @@ void menu_scan_sensors(void)
 		}
 	}
 
+	if (!scan_mode_on)
+	{
+		if (KEY_PRESSED(KEY_UP))
+		{
+			CLEAR_KEY_PRESSED(KEY_UP);
+			
+			if (0 == sensor)
+				sensor = SENSOR_COUNT;
+				
+			sensor--;
+		}
+		
+		if (KEY_PRESSED(KEY_DOWN))
+		{
+			CLEAR_KEY_PRESSED(KEY_DOWN);
+			
+			sensor++;
+			
+			if (SENSOR_COUNT <= sensor)
+				sensor = 0;
+		}
+	}
+	
 	sprintf(lcd_line0, "%s               ", sensor_text[sensor][0]);
 		
 	if (sensor_id[sensor] < 24)

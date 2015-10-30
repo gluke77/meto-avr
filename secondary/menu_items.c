@@ -90,6 +90,7 @@ char * sensor_text[][3] =
 		{"ялнрйю тнкэцх    ", "дю", "мер"}
 	};
 
+#define SENSOR_COUNT	(3)
 
 
 void menu_scan_sensors(void)
@@ -120,6 +121,30 @@ void menu_scan_sensors(void)
 				sensor_id++;
 			
 			if (2 < sensor_id)
+				sensor_id = 0;
+		}
+	}
+
+
+	if (!scan_mode_on)
+	{
+		if (KEY_PRESSED(KEY_UP))
+		{
+			CLEAR_KEY_PRESSED(KEY_UP);
+			
+			if (0 == sensor_id)
+				sensor_id = SENSOR_COUNT;
+				
+			sensor_id--;
+		}
+		
+		if (KEY_PRESSED(KEY_DOWN))
+		{
+			CLEAR_KEY_PRESSED(KEY_DOWN);
+			
+			sensor_id++;
+			
+			if (SENSOR_COUNT <= sensor_id)
 				sensor_id = 0;
 		}
 	}
