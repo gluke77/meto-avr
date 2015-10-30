@@ -47,6 +47,7 @@ uint8_t		usart_last_error = 0;
 uint32_t	foil_encoder_pulse_count = 0;
 uint16_t	g_pnevmo_pulse_duration = 2000;
 uint8_t		g_empty_bath_state = 0;
+uint8_t		g_encoder_on = 0;
 
 int main(void)
 {
@@ -657,7 +658,7 @@ void process_usb(void)
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-
+/*
 void do_encoder(void)
 {
 	static uint8_t old_encoder_state = 0;
@@ -671,7 +672,7 @@ void do_encoder(void)
 		foil_encoder_pulse_count++;
 	}
 }
-
+*/
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
@@ -695,24 +696,24 @@ void process_encoder_counter(void)
 	foil_encoder_pulse_count = 0;
 }
 
-#define DEFAULT_ENCODER_MAX_TIME_COUNTER	(100)
+#define DEFAULT_ENCODER_MAX_TIME_COUNTER	(1000)
 #define ENCODER_MAX_PULSE_COUNTER			(10)
 
-void new_do_encoder(void)
+void do_encoder(void)
 {
-	static uint8_t time_counter = 0;
+	static uint16_t time_counter = 0;
 	static uint8_t pulse_counter = 0;
 	static uint8_t is_running = 0;
-	static uint8_t max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
+	static uint16_t max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
 	
 	static uint8_t old_encoder_state = 0;
 	uint8_t			encoder_state;
 	
 	static uint8_t	array_pos = 0;
-	static uint8_t	array[ENCODER_MAX_PULSE_COUNTER];
+	static uint16_t	array[ENCODER_MAX_PULSE_COUNTER];
 	
 	uint8_t		idx;
-	uint16_t	sum;
+	uint32_t	sum;
 	
 	encoder_state = TEST_SENSOR(SENSOR_FOIL_ENCODER);	
 
@@ -742,6 +743,7 @@ void new_do_encoder(void)
 			}
 		}
 		
+		g_encoder_on = 1;
 		is_running = 1;
 		time_counter = 0;
 	}
@@ -751,6 +753,7 @@ void new_do_encoder(void)
 	if (time_counter > max_time_counter)
 	{
 		is_running = 0;
+		g_encoder_on = 0;
 		pulse_counter = 0;
 		max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
 		array_pos = 0;
@@ -761,6 +764,7 @@ void new_do_encoder(void)
 			do_shift();
 			SOFT_CONTROL_OFF(SOFT_CONTROL_SG);
 		}
+
 	}
 
 }

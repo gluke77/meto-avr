@@ -350,6 +350,8 @@ uint8_t	sensor_id[] =
 		SENSOR_SEC_REEL
 	};
 
+extern uint8_t g_encoder_on;
+
 void menu_scan_sensors(void)
 {
 	static uint8_t scan_mode_on = 1;
@@ -407,7 +409,10 @@ void menu_scan_sensors(void)
 	
 	sprintf(lcd_line0, "%s               ", sensor_text[sensor][0]);
 		
-	if (sensor_id[sensor] < 24)
+	if (SENSOR_FOIL_ENCODER == sensor_id[sensor])
+		sprintf(lcd_line1, "%s               ",
+			(g_encoder_on)?sensor_text[sensor][1]:sensor_text[sensor][2]);
+	else if (sensor_id[sensor] < 24)
 		sprintf(lcd_line1, "%s               ",
 			(TEST_SENSOR(sensor_id[sensor]))?sensor_text[sensor][1]:sensor_text[sensor][2]);
 	else 
