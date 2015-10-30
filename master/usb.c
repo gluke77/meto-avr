@@ -1,8 +1,7 @@
-#include <avr\io.h>
 #include "../common/common.h"
 #include "usb.h"
-#include <string.h>
 #include <../common/timer.h>
+#include <string.h>
 
 volatile uint8_t	usb_inbuf[USB_INBUF_SIZE];
 volatile uint8_t	usb_msg_ready = 0;

@@ -1,4 +1,3 @@
-#include <avr\io.h>
 #include "common.h"
 #include "lcd.h"
 
@@ -39,12 +38,12 @@ void lcd_write_cmd(uint8_t cmd)
 #endif /* _SECONDARY */	
 	LCD_CMD_PORT = cmd;
 #if defined _SECONDARY	
-	DELAY(1);
+	_delay_us(1);
 	LCD_LATCH_ON;
-	DELAY(10);
+	_delay_us(10);
 	LCD_LATCH_OFF;
 #endif /* _SECONDARY */	
-	DELAY(10000);
+	_delay_ms(10);
 }
 
 void lcd_write_data_(uint8_t data)
@@ -56,12 +55,12 @@ void lcd_write_data_(uint8_t data)
 #endif /* _SECONDARY */
 	LCD_DATA_PORT = data;
 #if defined _SECONDARY
-	DELAY(1);
+	_delay_us(1);
 	LCD_LATCH_ON;
-	DELAY(10);
+	_delay_us(10);
 	LCD_LATCH_OFF;
 #endif /* _SECONDARY */
-	DELAY(500);
+	_delay_ms(1);
 }	
 
 void lcd_write_data(uint8_t data)

@@ -1,7 +1,6 @@
 #if !defined _SOFT_CONTROLS_INCLUDED
 	#define _SOFT_CONTROLS_INCLUDED
 	
-#include <avr\io.h>
 #include "common.h"
 
 #if defined _MASTER

@@ -1,7 +1,6 @@
 #if !defined _SHIFT_INCLUDED
 #define _SHIFT_INCLUDED
 
-#include <avr\io.h>
 #include "..\common\common.h"
 
 #define SHIFT_OUT_PORT		PORTE

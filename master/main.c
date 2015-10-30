@@ -1,6 +1,4 @@
-#include <avr/io.h>
 #include <stdio.h>
-#include <string.h>
 #include "../common/common.h"
 #include "../common/usart.h"
 #include "../common/lcd.h"
@@ -667,7 +665,11 @@ void process_usb(void)
 			MINUTES = (uint8_t)(cmd.value[0] >> 8);
 			SECONDS = (uint8_t)(cmd.value[0] & 0xFF);
 			break;
-		
+			
+		case 0x03FF:
+			START_CLOCK;
+			break;
+			
 		default:	
 			break;
 		}
@@ -770,7 +772,7 @@ void do_pnevmoloaders(void)
 	static uint32_t pl_timer_count[PL_COUNT] = {0, 0, 0, 0, 0};
 
 	static uint8_t old_pl_state = 0;
-	uint8_t	pl_state;
+	uint8_t	pl_state = 0;
 	
 	uint8_t	idx;
 	

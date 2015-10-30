@@ -1,7 +1,6 @@
 #if !defined _BEEP_INCLUDED
 #define _BEEP_INCLUDED
 
-#include <avr/io.h>
 #include "common.h"
 
 #if defined _MASTER

@@ -1,8 +1,4 @@
-#include <avr\io.h>
-#include <avr\interrupt.h>
 #include <avr\eeprom.h>
-#include <string.h>
-#include <stdio.h>
 #include "../common/common.h"
 #include "../common/menu.h"
 #include "menu_items.h"
@@ -16,6 +12,7 @@
 #include "usb.h"
 #include "../common/meto.h"
 #include "clock.h"
+#include <stdio.h>
 
 void menu_items_init(void)
 {
@@ -276,7 +273,7 @@ extern uint8_t secondary_sensors;
 void menu_start(void)
 {
 	sprintf(lcd_line0, "нюн моо яхярелю ");
-	sprintf(lcd_line1, "     клор-2     ");
+	sprintf(lcd_line1, "     клор-1     ");
 
 	menu_common();
 }
@@ -326,7 +323,7 @@ char * sensor_text[][3] =
 		{"ялнрйю тнкэцх    ", "дю", "мер"}
 	};
 
-#define SENSOR_COUNT	(24)
+#define SENSOR_COUNT	(26)
 
 uint8_t	sensor_id[] =
 	{

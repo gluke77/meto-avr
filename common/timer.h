@@ -1,6 +1,8 @@
 #if !defined _TIMER_INCLUDED
 #define _TIMER_INCLUDER
 
+#include "common.h"
+
 #define	TIMER_COUNT		(32)
 
 #define TIMER_TICS_PER_SECOND	(1002)

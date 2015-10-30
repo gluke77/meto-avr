@@ -1,6 +1,3 @@
-#include <avr/io.h>
-#include <avr/signal.h>
-#include <avr/interrupt.h>
 #include "timer.h"
 #include "common.h"
 
@@ -27,7 +24,8 @@ void timer_init(void)
 	TCCR0 = _BV(CS00) | _BV(CS02) | _BV(WGM01);	// CTC mode, 128 prescaler
 }
 
-SIGNAL(SIG_OUTPUT_COMPARE0)
+ISR(TIMER0_COMP_vect)
+//SIGNAL(SIG_OUTPUT_COMPARE0)
 {
 	uint8_t				idx;
 

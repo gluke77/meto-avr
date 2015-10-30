@@ -1,4 +1,3 @@
-#include <avr\io.h>
 #include "common.h"
 #include "modbus.h"
 #include <string.h>

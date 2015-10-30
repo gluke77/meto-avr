@@ -1,9 +1,8 @@
 #if !defined __USART_H_INCLUDED_
 #define __USART_H_INCLUDED_
 
-#include <avr/io.h>
-#include <string.h>
 #include "common.h"
+#include <stdlib.h>
 
 #define USART_OK        ( 0 )
 #define USART_BUSY      ( 1 )

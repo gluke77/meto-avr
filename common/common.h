@@ -1,9 +1,6 @@
 #if !defined __COMMON_H_INCLUDED_
 #define __COMMON_H_INCLUDED_
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-
 #define FW_VERSION	("20081124")
 
 #define TRUE 1
@@ -19,9 +16,9 @@
 #define SETBITL(port, bit)		((port) |= (1L << (bit)))
 #define CLEARBITL(port, bit)	((port) &= ~(1L << (bit)))
 
-#define	EXT_MEM_INIT	{MCUCR = (1<<SRE);} // \
-			//			SETBIT(XMCRB, XMM0); \
-			//			SETBIT(XMCRB, XMM1); \
+#define	EXT_MEM_INIT	{MCUCR = (1<<SRE);} // 
+			//			SETBIT(XMCRB, XMM0); 
+			//			SETBIT(XMCRB, XMM1); 
 			//			SETBIT(XMCRB, XMM2);}
 
 //#define	GLOBAL_INT_ENABLE   SETBIT( SREG, 7 )
@@ -30,11 +27,9 @@
 #define	GLOBAL_INT_ENABLE   sei()
 #define	GLOBAL_INT_DISABLE  cli()
 
-#define DELAY(ch)	{uint32_t i = ch; while (i--);}
+//#define DELAY(ch)	{uint32_t i = ch; while (i--);}
 
-#define F_CPU (14745600UL)
-
-#include <avr/delay.h>
+//#define F_CPU (14745600UL)
 
 typedef enum
 {
@@ -49,5 +44,10 @@ typedef enum
 	RESULT_UNKNOWN_PORT,
 	RESULT_IGNORE_CMD
 } result_e;
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <inttypes.h>
+#include <util/delay.h>
 
 #endif /* __COMMON_H_INCLUDED_*/

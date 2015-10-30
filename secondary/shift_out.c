@@ -16,12 +16,12 @@ void	shift_one(uint8_t data)
 		else 
 			CLEARBIT(SHIFT_OUT_PORT, SHIFT_OUT_BIT);
 		
-		DELAY(SHIFT_DELAY);
+		_delay_us(SHIFT_DELAY);
 		SETBIT(SHIFT_CLK_PORT, SHIFT_CLK_BIT);
-		DELAY(SHIFT_DELAY);
+		_delay_us(SHIFT_DELAY);
 		CLEARBIT(SHIFT_CLK_PORT, SHIFT_CLK_BIT);
 		CLEARBIT(SHIFT_OUT_PORT, SHIFT_OUT_BIT);	
-		DELAY(SHIFT_DELAY);
+		_delay_us(SHIFT_DELAY);
 	}
 }
 
@@ -38,7 +38,7 @@ void	shift_all(void)
 {
 	shift_one(controls);
 	SHIFT_LATCH_ON;
-	DELAY(SHIFT_DELAY);
+	_delay_us(SHIFT_DELAY);
 	SHIFT_LATCH_OFF;
 }
 

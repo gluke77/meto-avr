@@ -1,4 +1,3 @@
-#include <avr\io.h>
 #include "..\common\common.h"
 #include "kbd.h"
 //#include "../common/beep.h"

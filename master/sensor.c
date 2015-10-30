@@ -1,4 +1,3 @@
-#include <avr\io.h>
 #include "..\common\common.h"
 #include "sensor.h"
 #include "shift.h"
@@ -78,7 +77,7 @@ void sensor_scan(void)
 	for (bank_id = 0; bank_id < SENSOR_BANK_COUNT; bank_id++)
 	{
 		sensor_select(bank_id);
-		DELAY(500);
+		_delay_us(500);
 		sensor_value = SENSOR_PORT;
 
 		for (key_id = 0; key_id < 8; key_id++)
@@ -125,7 +124,7 @@ void sensor_scan(void)
 void sensor_scan1(uint8_t bank_id)
 {
 	uint8_t	sensor_value;
-	uint8_t	key_id;
+	//uint8_t	key_id;
 	
 	sensor_value = SENSOR_PORT;
 /*

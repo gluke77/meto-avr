@@ -1,7 +1,6 @@
 #if !defined __CLOCK_H_INCLUDED_
 #define __CLOCK_H_INCLUDED_
 
-#include <avr/io.h>
 #include "..\common\common.h"
 
 #define CLOCK_BASE			0x8000

@@ -1,4 +1,3 @@
-#include <avr\io.h>
 #include "common.h"
 #include "beep.h"
 #include "timer.h"
@@ -11,7 +10,7 @@ void beep_init(void)
 void beep_ms(uint16_t delay)
 {
 	BEEP_ON;
-	delay_ms(delay);
+	_delay_ms(delay);
 	BEEP_OFF;
 }
 

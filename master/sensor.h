@@ -1,7 +1,6 @@
 #if !defined _SENSOR_INCLUDED
 	#define _SENSOR_INCLUDED
 	
-#include <avr\io.h>
 #include "..\common\common.h"
 
 #define SENSOR_PORT			PINF

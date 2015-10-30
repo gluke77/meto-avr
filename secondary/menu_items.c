@@ -65,7 +65,7 @@ void menu_common(void)
 void menu_start(void)
 {
 	sprintf(lcd_line0, "нюн моо яхярелю ");
-	sprintf(lcd_line1, "     клор-2     ");
+	sprintf(lcd_line1, "     клор-1     ");
 	
 	menu_common();
 }

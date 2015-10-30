@@ -1,4 +1,3 @@
-#include <avr\io.h>
 #include "..\common\common.h"
 #include "shift.h"
 
@@ -17,10 +16,10 @@ void	shift_one(uint8_t data)
 			CLEARBIT(SHIFT_OUT_PORT, SHIFT_OUT_BIT);
 		
 		SETBIT(SHIFT_CLK_PORT, SHIFT_CLK_BIT);
-		DELAY(SHIFT_DELAY);
+		_delay_us(SHIFT_DELAY);
 		CLEARBIT(SHIFT_CLK_PORT, SHIFT_CLK_BIT);
 		CLEARBIT(SHIFT_OUT_PORT, SHIFT_OUT_BIT);
-		DELAY(SHIFT_DELAY);
+		_delay_us(SHIFT_DELAY);
 	}
 }
 
@@ -40,7 +39,7 @@ void	shift_all(void)
 	shift_one(controls[0]);
 	shift_one(controls[1]);
 	SHIFT_LATCH_ON;
-	DELAY(SHIFT_DELAY);
+	_delay_us(SHIFT_DELAY);
 	SHIFT_LATCH_OFF;
 }
 

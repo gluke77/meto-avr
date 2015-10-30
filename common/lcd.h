@@ -1,7 +1,6 @@
 #if !defined _LCD_INCLUDED
 	#define _LCD_INCLUDED
 
-#include <avr\io.h>
 #include "common.h"
 
 #if defined _SECONDARY

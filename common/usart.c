@@ -1,10 +1,9 @@
 // #define ENABLE_BIT_DEFINITIONS
-#include <avr/io.h>
-#include <avr/signal.h>
-#include <string.h>
 #include "usart.h"
 #include "common.h"
 #include "timer.h"
+
+#include <string.h>
 
 volatile uint8_t	usart0_inbuf[USART0_INBUF_SIZE];
 volatile uint8_t	usart1_inbuf[USART1_INBUF_SIZE];
@@ -212,8 +211,8 @@ void usart1_read(void)
 	}
 }
 
-
-SIGNAL(SIG_UART0_RECV)
+ISR(USART0_RX_vect)
+//SIGNAL(SIG_UART0_RECV)
 {
 	uint8_t	byte;
 	
@@ -236,7 +235,8 @@ SIGNAL(SIG_UART0_RECV)
 	}
 }
 
-SIGNAL(SIG_UART1_RECV)
+ISR(USART1_RX_vect)
+//SIGNAL(SIG_UART1_RECV)
 {
 	uint8_t	byte;
 	
@@ -300,9 +300,6 @@ result_e usart0_cmd(uint8_t * req, uint8_t * ack, size_t ack_size, uint16_t dela
 	result_e		res;
 	uint8_t			timer_id;
 	uint8_t			idx;
-	
-	char	buf[50];
-	
 	
 	if (USART_RS485_SLAVE == usart0_getmode())
 		usart0_write();
@@ -592,8 +589,6 @@ void usart0_rx_byte_sec(uint8_t byte)
 
 void usart1_rx_byte_sec(uint8_t byte)
 {
-	char buf[5];
-
 	if (('~' == byte) && (0 == usart1_inbuf_pos))
 	{
 		usart1_msg_ready = 0;

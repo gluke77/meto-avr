@@ -141,7 +141,7 @@ void kbd_scan(void)
 	for (bank_id = 0; bank_id < KBD_BANK_COUNT; bank_id++)
 	{
 		kbd_select(bank_id);
-		DELAY(10);
+		_delay_us(5);
 		one_bank_scan(bank_id);
 	}
 

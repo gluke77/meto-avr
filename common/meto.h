@@ -1,9 +1,6 @@
 #if !defined _METO_INCLUDED
 #define _METO_INCLUDED
 
-#if !defined _PC
-	#include <avr\io.h>
-#endif /* _PC */
 #include "common.h"
 
 // SENSORS

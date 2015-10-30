@@ -1,9 +1,8 @@
 #if !defined _USB_INCLUDED
 #define _USB_INCLUDED
 
-#include <avr\io.h>
 #include "../common/common.h"
-#include <string.h>
+#include <stdlib.h>
 
 #define _USE_TIMED_USB	1 // comment out this for sync usb
 

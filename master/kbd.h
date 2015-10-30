@@ -1,7 +1,6 @@
 #if !defined _KBD_INCLUDED
 	#define _KBD_INCLUDED
 	
-#include <avr\io.h>
 #include "..\common\common.h"
 
 #define KBD_PORT		(*(volatile uint8_t *)(0x80FF))
