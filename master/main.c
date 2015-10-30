@@ -300,10 +300,25 @@ void process_soft_controls(void)
 void process_sensors(void)
 {
 	static uint8_t	pressure_state = 0;
+	static uint8_t	germo_state = 0;
 	
-	if (TEST_SENSOR(BUTTON_BATH_GERMO))/* &&
-		TEST_SENSOR(SENSOR_GERMO_BEGIN))*/
-		SOFT_CONTROL_ON(SOFT_CONTROL_GERMO);
+	if (TEST_SENSOR(BUTTON_BATH_GERMO))
+		germo_state = 1;
+		
+	if (!TEST_SENSOR(BUTTON_BATH_GERMO) && (1 == germo_state))
+	{
+		germo_state = 0;
+		
+		if (TEST_SOFT_CONTROL(SOFT_CONTROL_GERMO))
+			SOFT_CONTROL_OFF(SOFT_CONTROL_GERMO);
+		else
+			SOFT_CONTROL_ON(SOFT_CONTROL_GERMO);
+	}
+
+
+//	if (TEST_SENSOR(BUTTON_BATH_GERMO))/* &&
+//		TEST_SENSOR(SENSOR_GERMO_BEGIN))*/
+//		SOFT_CONTROL_ON(SOFT_CONTROL_GERMO);
 
 	if (TEST_SENSOR(SENSOR_GERMO_END))
 		SOFT_CONTROL_OFF(SOFT_CONTROL_GERMO);
@@ -333,7 +348,7 @@ void process_sensors(void)
 	if (TEST_SENSOR(SENSOR_TANK_WATER_LEVEL2) && TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_PUMP))
 		SOFT_CONTROL_OFF(SOFT_CONTROL_COOLER_PUMP);
 
-	if (TEST_SENSOR(BUTTON_BATH_PRESSURE) && (0 == pressure_state))
+	if (TEST_SENSOR(BUTTON_BATH_PRESSURE))
 		pressure_state = 1;
 		
 	if (!TEST_SENSOR(BUTTON_BATH_PRESSURE) && (1 == pressure_state))
