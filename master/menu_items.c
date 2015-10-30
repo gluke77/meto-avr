@@ -20,14 +20,14 @@
 void menu_items_init(void)
 {
 	uint8_t		idx;
-	
+
 	menu_items[MENU_MODE_START][0] = menu_start;
-	
+
 //	menu_items[MENU_MODE_SENSORS][0] = menu_sensors;
-	
+
 	menu_items[MENU_MODE_SCAN_SENSORS][0] = menu_scan_sensors;
 
-	idx = 0; 
+	idx = 0;
 
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_controls;
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_water_mode;
@@ -60,7 +60,7 @@ void menu_common(void)
 		CLEAR_KEY_PRESSED(KEY_UP);
 		beep_ms(50);
 	}
-	
+
 	if (KEY_PRESSED(KEY_DOWN))
 	{
 		menu_item_next();
@@ -111,30 +111,30 @@ void loadFromEE(void)
 	dds_setfreq((uint32_t)eeprom_read_word(FREQ_ADDR));
 	g_pwm_base = eeprom_read_byte(PWM_BASE_ADDR);
 	g_pwm_shift = eeprom_read_byte(PWM_SHIFT_ADDR);
-	
+
 	adc_set_delay(0, eeprom_read_byte(ADC0_DELAY_ADDR));
 	adc_set_count(0, eeprom_read_word(ADC0_COUNT_ADDR));
 	adc_set_delay(1, eeprom_read_byte(ADC1_DELAY_ADDR));
-	adc_set_count(1, eeprom_read_word(ADC1_COUNT_ADDR));	
+	adc_set_count(1, eeprom_read_word(ADC1_COUNT_ADDR));
 	adc_set_delay(2, eeprom_read_byte(ADC2_DELAY_ADDR));
 	adc_set_count(2, eeprom_read_word(ADC2_COUNT_ADDR));
 	adc_set_delay(3, eeprom_read_byte(ADC3_DELAY_ADDR));
 	adc_set_count(3, eeprom_read_word(ADC3_COUNT_ADDR));
-	
+
 	set_pfc_mode(eeprom_read_byte(PFC_MODE_ADDR));
-	
+
 	g_int_timeout = eeprom_read_word(INT_TIMEOUT_ADDR);
 	g_keep_mode = eeprom_read_byte(KEEP_MODE_ADDR);
 	g_keep_freq_step = eeprom_read_byte(KEEP_STEP_ADDR);
 	g_keep_freq_max_delta = eeprom_read_byte(KEEP_DELTA_ADDR);
 	g_max_pwm = eeprom_read_byte(MAX_PWM_ADDR);
 	g_min_pwm = eeprom_read_byte(MIN_PWM_ADDR);
-	
+
 	g_baudrate = (uint32_t)eeprom_read_word(BAUD_LO_ADDR);
 	g_baudrate |= ((uint32_t)(eeprom_read_word(BAUD_HI_ADDR))) << 16;
-	
+
 	g_modbus_id = eeprom_read_byte(MODBUS_ID_ADDR);
-	
+
 	g_temp_alarm = eeprom_read_word(TEMP_ALARM_ADDR);
 	g_temp_stop = eeprom_read_word(TEMP_STOP_ADDR);
 }
@@ -146,7 +146,7 @@ void storeToEE(void)
 	eeprom_write_word(FREQ_ADDR, (uint16_t)g_dds_freq);
 	eeprom_write_byte(PWM_BASE_ADDR, g_pwm_base);
 	eeprom_write_byte(PWM_SHIFT_ADDR, g_pwm_shift);
-	
+
 	eeprom_write_byte(ADC0_DELAY_ADDR, adc_get_delay(0));
 	eeprom_write_word(ADC0_COUNT_ADDR, adc_get_count(0));
 	eeprom_write_byte(ADC1_DELAY_ADDR, adc_get_delay(1));
@@ -155,7 +155,7 @@ void storeToEE(void)
 	eeprom_write_word(ADC2_COUNT_ADDR, adc_get_count(2));
 	eeprom_write_byte(ADC3_DELAY_ADDR, adc_get_delay(3));
 	eeprom_write_word(ADC3_COUNT_ADDR, adc_get_count(3));
-	
+
 	eeprom_write_byte(PFC_MODE_ADDR, g_pfc_mode);
 	eeprom_write_word(INT_TIMEOUT_ADDR, g_int_timeout);
 	eeprom_write_byte(KEEP_MODE_ADDR, g_keep_mode);
@@ -165,7 +165,7 @@ void storeToEE(void)
 	eeprom_write_byte(MIN_PWM_ADDR, g_min_pwm);
 	eeprom_write_word(BAUD_LO_ADDR, (uint16_t)(g_baudrate & 0x0000FFFF));
 	eeprom_write_word(BAUD_HI_ADDR, (uint16_t)(g_baudrate >> 16));
-	
+
 	eeprom_write_byte(MODBUS_ID_ADDR, g_modbus_id);
 	eeprom_write_word(TEMP_ALARM_ADDR, g_temp_alarm);
 	eeprom_write_word(TEMP_STOP_ADDR, g_temp_stop);
@@ -179,22 +179,22 @@ void reset_settings(void)
 
 	g_pwm_base = 77;
 	g_pwm_shift = 0;
-	
+
 	g_int_timeout = 50;
 	g_keep_mode = 1;
-	
+
 	g_keep_freq_step = 1;
 	g_keep_freq_max_delta = 5;
-	
+
 	g_max_pwm = 255;
 	g_min_pwm = 0;
-	
+
 	g_baudrate = 115200;
 	g_modbus_id = 1;
-	
+
 	g_temp_alarm = 75;
 	g_temp_stop = 80;
-	
+
 	adc_set_delay(0, 1);
 	adc_set_count(0, 800);
 
@@ -206,7 +206,7 @@ void reset_settings(void)
 
 	adc_set_delay(3, 1);
 	adc_set_count(3, 400);
-	
+
 	set_pfc_mode(PFC_AUTO);
 }
 
@@ -217,14 +217,14 @@ void menu_modbus_id(void)
 	if (KEY_PRESSED(KEY_RIGHT))
 	{
 		g_modbus_id++;
-			
+
 		CLEAR_KEY_PRESSED(KEY_RIGHT);
 	}
 
 	if (KEY_PRESSED(KEY_LEFT))
 	{
 		g_modbus_id--;
-		
+
 		CLEAR_KEY_PRESSED(KEY_LEFT);
 	}
 
@@ -236,20 +236,20 @@ uint32_t	baud[] = {2400, 4800, 9600, 19200, 38400, 57600, 115200};
 void menu_baudrate(void)
 {
 	uint8_t		idx;
-	
+
 	for (idx = 0; idx < 7; idx++)
 		if (g_baudrate == baud[idx])
 			break;
-	
+
 	sprintf(lcd_line1, "ÑÊÎÐÎÑÒÜ=%-11ld", g_baudrate);
 
 	if (KEY_PRESSED(KEY_RIGHT))
 	{
 		idx++;
-		
+
 		if (7 == idx)
 			idx = 0;
-			
+
 		CLEAR_KEY_PRESSED(KEY_RIGHT);
 	}
 
@@ -257,12 +257,12 @@ void menu_baudrate(void)
 	{
 		if (0 == idx)
 			idx = 7;
-			
+
 		idx--;
-		
+
 		CLEAR_KEY_PRESSED(KEY_LEFT);
 	}
-	
+
 	g_baudrate = baud[idx];
 
 	menu_common();
@@ -276,19 +276,19 @@ void menu_start(void)
 {
 	sprintf(lcd_line0, "ÎÀÎ ÍÏÏ ÑÈÑÒÅÌÀ ");
 	sprintf(lcd_line1, "     ËÌÏÒ-2     ");
-	
+
 	menu_common();
 }
 
 void menu_sensors(void)
 {
 	uint8_t	idx;
-	
+
 	sprintf(lcd_line0, "ÂÕÎÄÛ           ");
-	
+
 	for (idx = 0; idx < 3; idx++)
 		lcd_line0[13 + idx] = (TESTBIT(secondary_sensors, idx))?'1':'.';
-		
+
 	for (idx = 0; idx < 16; idx++)
 		lcd_line1[idx] = (TEST_SENSOR(idx))?'1':'.';
 
@@ -364,14 +364,14 @@ void menu_scan_sensors(void)
 	static uint8_t scan_mode_on = 1;
 	static uint8_t sensor = 0;
 	static uint8_t timer_id = 0;
-	
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
 		scan_mode_on ^= 0x01;
 		beep_ms(50);
 	}
-	
+
 	if ((scan_mode_on) && (0 == timer_id))
 			timer_id = start_timer(1000);
 
@@ -382,10 +382,10 @@ void menu_scan_sensors(void)
 		{
 			stop_timer(timer_id);
 			timer_id = 0;
-			
+
 			if (scan_mode_on)
 				sensor++;
-			
+
 			if (SENSOR_COUNT <= sensor)
 				sensor = 0;
 		}
@@ -396,40 +396,40 @@ void menu_scan_sensors(void)
 		if (KEY_PRESSED(KEY_UP))
 		{
 			CLEAR_KEY_PRESSED(KEY_UP);
-			
+
 			if (0 == sensor)
 				sensor = SENSOR_COUNT;
-				
+
 			sensor--;
-			
+
 			beep_ms(50);
 		}
-		
+
 		if (KEY_PRESSED(KEY_DOWN))
 		{
 			CLEAR_KEY_PRESSED(KEY_DOWN);
-			
+
 			sensor++;
-			
+
 			if (SENSOR_COUNT <= sensor)
 				sensor = 0;
-				
+
 			beep_ms(50);
 		}
 	}
-	
+
 	sprintf(lcd_line0, "%s               ", sensor_text[sensor][0]);
-		
+
 	if (SENSOR_FOIL_ENCODER == sensor_id[sensor])
 		sprintf(lcd_line1, "%s %u              ",
 			(TEST_SENSOR(sensor_id[sensor]))?sensor_text[sensor][1]:sensor_text[sensor][2],
 			max_time_counter);
 
-	else if (sensor_id[sensor] < 24)
+	else if (sensor_id[sensor] < 24) // 24 = primary sensors count
 		sprintf(lcd_line1, "%s               ",
 			(TEST_SENSOR(sensor_id[sensor]))?sensor_text[sensor][1]:sensor_text[sensor][2]);
-	
-	else 
+
+	else
 		sprintf(lcd_line1, "%s               ",
 			(TESTBIT(secondary_sensors, sensor_id[sensor] - 24))?sensor_text[sensor][1]:sensor_text[sensor][2]);
 
@@ -439,12 +439,12 @@ void menu_scan_sensors(void)
 void menu_controls(void)
 {
 	sprintf(lcd_line0,"ÂÛÕÎÄÛ          ");
-	
+
 	lcd_line1[16] = 0;
-	
+
 	lcd_line1[SOFT_CONTROL_WATER_MODE0] = '0' + GET_WATER_MODE;
 	lcd_line1[SOFT_CONTROL_WATER_MODE1] = ' ';
-	
+
 	lcd_line1[SOFT_CONTROL_COOLER_PUMP] = (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_PUMP))?'Õ':'.';
 	lcd_line1[SOFT_CONTROL_EXTRUDER_PUMP] = (TEST_SOFT_CONTROL(SOFT_CONTROL_EXTRUDER_PUMP))?'Ý':'.';
 	lcd_line1[SOFT_CONTROL_COOLER_TUBE] = (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_TUBE))?'Ï':'.';
@@ -452,33 +452,33 @@ void menu_controls(void)
 	lcd_line1[SOFT_CONTROL_SG] = (TEST_SOFT_CONTROL(SOFT_CONTROL_SG))?'Ñ':'.';
 	lcd_line1[SOFT_CONTROL_DRIER] = (TEST_SOFT_CONTROL(SOFT_CONTROL_DRIER))?'Î':'.';
 	lcd_line1[SOFT_CONTROL_GERMO] = (TEST_SOFT_CONTROL(SOFT_CONTROL_GERMO))?'Ã':'.';
-	
+
 	lcd_line1[SOFT_LAMP_STOP - 1] = (TEST_SOFT_CONTROL(SOFT_LAMP_STOP))?'S':'.';
 	lcd_line1[SOFT_CONTROL_FOIL_LED - 1] = (TEST_SOFT_CONTROL(SOFT_CONTROL_FOIL_LED))?'Ë':'.';
 	lcd_line1[SOFT_CONTROL_BUNKER_MOTOR - 1] = (TEST_SOFT_CONTROL(SOFT_CONTROL_BUNKER_MOTOR))?'Á':'.';
 	lcd_line1[SOFT_CONTROL_TRACTOR_LOCK - 1] = (TEST_SOFT_CONTROL(SOFT_CONTROL_TRACTOR_LOCK))?'Ò':'.';
-	
-	
+
+
 	lcd_line1[SOFT_SIREN_MODE0 - 1] = ' ';
 	lcd_line1[SOFT_SIREN_MODE1 - 1] = '0' + GET_SIREN_MODE;
-	
+
 	lcd_line1[15] = ' ';
-	
+
 	menu_common();
 }
 
 
 void menu_water_mode(void)
-{	
+{
 	uint16_t water_mode;
-	
+
 	sprintf(lcd_line0,"ÓÐÎÂÅÍÜ ÂÎÄÛ    ");
 	sprintf(lcd_line1,"%d                ", GET_WATER_MODE);
-	
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		water_mode = GET_WATER_MODE;
 		water_mode++;
 		if (2 < water_mode)
@@ -486,241 +486,241 @@ void menu_water_mode(void)
 		SET_WATER_MODE(water_mode);
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_cooler_pump(void)
-{	
+{
 	sprintf(lcd_line0,"ÍÀÑÎÑ ÕÎËÎÄ.ÓÑÒ.");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_PUMP))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_PUMP))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_COOLER_PUMP);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_COOLER_PUMP);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_extruder_pump(void)
-{	
+{
 	sprintf(lcd_line0,"ÍÀÑÎÑ ÎÕËÀÆÄÅÍÈß");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_EXTRUDER_PUMP))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_EXTRUDER_PUMP))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_EXTRUDER_PUMP);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_EXTRUDER_PUMP);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_germo(void)
-{	
+{
 	sprintf(lcd_line0,"ÃÅÐÌÅÒÈÇÀÖÈß    ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_GERMO))?"ÂÊËÞ×ÅÍÀ":"ÂÛÊËÞ×ÅÍÀ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_GERMO))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_GERMO);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_GERMO);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_pressure(void)
-{	
+{
 	sprintf(lcd_line0,"ÂÎÇÄÓÕ Â ÒÐÓÁÅ  ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_PRESSURE);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_PRESSURE);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_sg(void)
-{	
+{
 	sprintf(lcd_line0,"ÑÂÀÐ. ÃÎËÎÂÊÀ.  ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_SG))?"ÏÐÈÆÀÒÀ":"ÏÎÄÍßÒÀ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_SG))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_SG);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_SG);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_drier(void)
-{	
+{
 	sprintf(lcd_line0,"ÎÑÓØÈÒÅËÜ       ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_DRIER))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_DRIER))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_DRIER);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_DRIER);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_cooler_tube(void)
-{	
+{
 	sprintf(lcd_line0,"ÏÐÅÄÂ.ÎÕËÀÆÄÅÍÈÅ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_TUBE))?"ÂÊËÞ×ÅÍÎ":"ÂÛÊËÞ×ÅÍÎ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_TUBE))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_COOLER_TUBE);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_COOLER_TUBE);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_foil_led(void)
-{	
+{
 	sprintf(lcd_line0,"ÊÎÍÒÐÎËÜ ÔÎËÜÃÈ ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_FOIL_LED))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_FOIL_LED))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_FOIL_LED);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_FOIL_LED);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_bunker_motor(void)
-{	
+{
 	sprintf(lcd_line0,"ÄÂÈÃ. ÍÀÊÎÏÈÒÅËß");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_BUNKER_MOTOR))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_BUNKER_MOTOR))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_BUNKER_MOTOR);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_BUNKER_MOTOR);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_tractor_lock(void)
-{	
+{
 	sprintf(lcd_line0,"ÏÐÈÆÈÌ ÒÓ       ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_SOFT_CONTROL(SOFT_CONTROL_TRACTOR_LOCK))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_TRACTOR_LOCK))
 			SOFT_CONTROL_OFF(SOFT_CONTROL_TRACTOR_LOCK);
 		else
 			SOFT_CONTROL_ON(SOFT_CONTROL_TRACTOR_LOCK);
-			
+
 		beep_ms(50);
 	}
 
-	
+
 	menu_common();
 }
 
 void menu_siren_mode(void)
-{	
+{
 	uint16_t siren_mode;
-	
+
 	sprintf(lcd_line0,"ÐÅÆÈÌ ÑÈÐÅÍÛ    ");
 	sprintf(lcd_line1,"%d                ", GET_SIREN_MODE);
-	
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		siren_mode = GET_SIREN_MODE;
 		siren_mode++;
 		if (3 < siren_mode)
 			siren_mode = 0;
 		SET_SIREN_MODE(siren_mode);
-		
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
@@ -731,17 +731,17 @@ void menu_usb(void)
 
 	sprintf(lcd_line1,"%s                ",
 		(usb_on)?"ÅÑÒÜ":"ÍÅÒ");
-		
+
 	if (!usb_on)
 		if (KEY_PRESSED(KEY_ENTER))
 		{
 			CLEAR_KEY_PRESSED(KEY_ENTER);
-			
+
 			usb_on = 1;
-			
+
 			beep_ms(50);
 		}
-		
+
 	menu_common();
 }
 
@@ -753,7 +753,7 @@ void menu_usart(void)
 {
 	sprintf(lcd_line0,"ÎØÈÁÊÈ ÂÅÄÎÌÎÃÎ ");
 	sprintf(lcd_line1,"%d %d %d            ", usart_error_count, usart_last_error, usart_good_count);
-		
+
 	menu_common();
 }
 
@@ -762,65 +762,65 @@ extern uint8_t g_empty_bath_state;
 void menu_empty_bath(void)
 {
 	sprintf(lcd_line0,"ÑËÈÂ ÂÀÍÍÛ      ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		g_empty_bath_state?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		g_empty_bath_state ^= 0x01;
 		SET_WATER_MODE(WATER_MODE_MANUAL);
-	
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_work_pump(void)
 {
 	sprintf(lcd_line0,"ÍÀÑÎÑ ÖÈÐÊÓËßÖÈÈ");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_CONTROL(CONTROL_WORK_BATH_PUMP))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_CONTROL(CONTROL_WORK_BATH_PUMP))
 			CONTROL_OFF(CONTROL_WORK_BATH_PUMP);
 		else
 			CONTROL_ON(CONTROL_WORK_BATH_PUMP);
-			
+
 		SET_WATER_MODE(WATER_MODE_MANUAL);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
 void menu_fillup_pump(void)
 {
 	sprintf(lcd_line0,"ÍÀÑÎÑ ÍÀÏÎËÍÅÍÈß");
-	sprintf(lcd_line1,"%s                ", 
+	sprintf(lcd_line1,"%s                ",
 		(TEST_CONTROL(CONTROL_FILLUP_BATH_PUMP))?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-		
+
 		if (TEST_CONTROL(CONTROL_FILLUP_BATH_PUMP))
 			CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
 		else
 			CONTROL_ON(CONTROL_FILLUP_BATH_PUMP);
-			
+
 		SET_WATER_MODE(WATER_MODE_MANUAL);
-			
+
 		beep_ms(50);
 	}
-	
+
 	menu_common();
 }
 
@@ -832,16 +832,16 @@ void menu_debug(void)
 
 	sprintf(lcd_line1,"%s                ",
 		(g_debug_mode)?"ÂÊËÞ×ÅÍ":"ÂÛÊËÞ×ÅÍ");
-		
+
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
-			
+
 		g_debug_mode ^= 0x01;
-			
+
 		beep_ms(50);
 	}
-		
+
 	menu_common();
 }
 
@@ -853,17 +853,17 @@ void menu_clock(void)
 	uint8_t	hh;
 	uint8_t	mm;
 	uint8_t	ss;
-	
+
 	yr = YEAR;
 	mnth = MONTH;
 	d = D_MONTH;
 	hh = HOURS;
 	mm = MINUTES;
 	ss = SECONDS;
-	
+
 	sprintf(lcd_line0, "%02d-%02d-%02d                          ", d, mnth, yr);
 	sprintf(lcd_line1, "%02d:%02d:%02d                          ", hh, mm, ss);
-	
+
 	menu_common();
 }
 
