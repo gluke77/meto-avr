@@ -231,13 +231,16 @@ void process_soft_controls(void)
 		
 		sg_timer_id = start_timer(g_pnevmo_pulse_duration);
 		
-		CONTROL_OFF(CONTROL_HEAD_UP);
-		CONTROL_OFF(CONTROL_HEAD_DOWN);
-		
 		if (TEST_SOFT_CONTROL(SOFT_CONTROL_SG))
+		{
 			CONTROL_ON(CONTROL_HEAD_DOWN);
+			CONTROL_OFF(CONTROL_HEAD_UP);
+		}
 		else
+		{
 			CONTROL_ON(CONTROL_HEAD_UP);
+			CONTROL_OFF(CONTROL_HEAD_DOWN);
+		}
 	}
 			
 	if (sg_timer_id)
@@ -690,4 +693,74 @@ void process_encoder_counter(void)
 	// estimate delay/foil_encoder_pulse_count here
 	
 	foil_encoder_pulse_count = 0;
+}
+
+#define DEFAULT_ENCODER_MAX_TIME_COUNTER	(100)
+#define ENCODER_MAX_PULSE_COUNTER			(10)
+
+void new_do_encoder(void)
+{
+	static uint8_t time_counter = 0;
+	static uint8_t pulse_counter = 0;
+	static uint8_t is_running = 0;
+	static uint8_t max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
+	
+	static uint8_t old_encoder_state = 0;
+	uint8_t			encoder_state;
+	
+	static uint8_t	array_pos = 0;
+	static uint8_t	array[ENCODER_MAX_PULSE_COUNTER];
+	
+	uint8_t		idx;
+	uint16_t	sum;
+	
+	encoder_state = TEST_SENSOR(SENSOR_FOIL_ENCODER);	
+
+	time_counter++;
+	
+	if (!old_encoder_state && encoder_state)
+	{
+		old_encoder_state = encoder_state;
+		
+		if (is_running)
+		{
+			if (pulse_counter < ENCODER_MAX_PULSE_COUNTER)
+				pulse_counter++;
+		
+			array[array_pos] = time_counter;
+			
+			array_pos++;
+			if (array_pos >= ENCODER_MAX_PULSE_COUNTER)
+				array_pos = 0;
+				
+			if (ENCODER_MAX_PULSE_COUNTER <= pulse_counter)
+			{
+				for (idx = 0; idx < ENCODER_MAX_PULSE_COUNTER; idx++)
+					sum += array[idx];
+					
+				max_time_counter = (uint8_t)((sum << 1) / ENCODER_MAX_PULSE_COUNTER);
+			}
+		}
+		
+		is_running = 1;
+		time_counter = 0;
+	}
+	else if (old_encoder_state && !encoder_state)
+		old_encoder_state = encoder_state;
+
+	if (time_counter > max_time_counter)
+	{
+		is_running = 0;
+		pulse_counter = 0;
+		max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
+		array_pos = 0;
+		
+		if (SOFT_CONTROL_ON(SOFT_CONTROL_SG))
+		{
+			CONTROL_ON(CONTROL_HEAD_UP);
+			do_shift();
+			SOFT_CONTROL_OFF(SOFT_CONTROL_SG);
+		}
+	}
+
 }
