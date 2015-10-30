@@ -491,7 +491,7 @@ void process_water(void)
 
 		if ((WATER_ACTION_FILLUP == water_action) && TEST_SENSOR(SENSOR_BATH_WATER_LEVEL1))
 		{
-			water_action = WATER_ACTION_NOP;
+			water_action = WATER_ACTION_KEEP_1;
 			level_reached = 1;
 		}
 				
@@ -503,6 +503,12 @@ void process_water(void)
 	case WATER_ACTION_NOP:
 		CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
 		CONTROL_OFF(CONTROL_WORK_BATH_PUMP);
+		g_empty_bath_state = 0;
+		break;
+
+	case WATER_ACTION_KEEP_1:
+		CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
+		CONTROL_ON(CONTROL_WORK_BATH_PUMP);
 		g_empty_bath_state = 0;
 		break;
 

@@ -79,6 +79,7 @@ extern uint8_t soft_controls;
 typedef enum
 {
 	WATER_ACTION_NOP = 0,
+	WATER_ACTION_KEEP_1,
 	WATER_ACTION_FILLUP,
 	WATER_ACTION_EMPTY,
 	WATER_ACTION_MANUAL
