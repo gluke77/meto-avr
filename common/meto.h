@@ -14,6 +14,8 @@
 #define SENSOR_BATH_WATER_LEVEL1		(15)
 #define SENSOR_TANK_WATER_LEVEL0		(9)
 #define SENSOR_TANK_WATER_LEVEL1		(11)
+#define SENSOR_TANK_WATER_LEVEL2		(2)
+#define SENSOR_TANK_WATER_LEVEL3		(0)
 
 #define SENSOR_HEAD_WATER		(10)
 #define SENSOR_E2_WATER			(8)		// 2x inner extruder complex
