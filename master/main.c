@@ -632,14 +632,15 @@ void process_usb(void)
 
 #define DEFAULT_ENCODER_MAX_TIME_COUNTER	(1000)
 #define ENCODER_MAX_PULSE_COUNTER			(10)
+#define ENCODER_MIN_TIME_COUNTER			(50)
 
-
+uint16_t max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
 
 void do_encoder(void)
 {
 	static uint16_t time_counter = 0;
 	static uint8_t pulse_counter = 0;
-	static uint16_t max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
+//	static uint16_t max_time_counter = DEFAULT_ENCODER_MAX_TIME_COUNTER;
 	
 	static uint8_t old_encoder_state = 0;
 	uint8_t			encoder_state;
@@ -671,10 +672,14 @@ void do_encoder(void)
 				
 			if (ENCODER_MAX_PULSE_COUNTER <= pulse_counter)
 			{
+				sum = 0;
 				for (idx = 0; idx < ENCODER_MAX_PULSE_COUNTER; idx++)
 					sum += array[idx];
 					
-				max_time_counter = (uint8_t)((sum << 1) / ENCODER_MAX_PULSE_COUNTER);
+				max_time_counter = (uint16_t)((sum << 1) / ENCODER_MAX_PULSE_COUNTER);
+				if (max_time_counter < ENCODER_MIN_TIME_COUNTER)
+					max_time_counter = ENCODER_MIN_TIME_COUNTER;
+				
 			}
 		}
 		
