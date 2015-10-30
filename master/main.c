@@ -409,7 +409,7 @@ void process_secondary(void)
 		if (RESULT_OK == res)
 		{
 			soft_controls &= 0x01FF;
-			soft_controls |= cmd.value[0] & 0xFC00;
+			soft_controls |= cmd.value[0] & 0xFE00; // here was crap with pressure lamp
 		
 			secondary_sensors = (uint8_t)(cmd.value[0] & 0x00FF);
 		
