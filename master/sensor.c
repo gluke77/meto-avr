@@ -3,6 +3,7 @@
 #include "sensor.h"
 #include "shift.h"
 
+volatile uint8_t	soft_sensors[SENSOR_BANK_COUNT];
 volatile uint8_t	sensors[SENSOR_BANK_COUNT];
 volatile uint8_t	tmp_sensors[SENSOR_BANK_COUNT];
 volatile uint8_t	sensor_value_1[SENSOR_BANK_COUNT];

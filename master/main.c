@@ -37,6 +37,7 @@ void process_water(void);
 void process_encoder_counter(void);
 
 void do_encoder(void);
+void do_pnevmoloaders(void);
 
 uint8_t		secondary_sensors;
 uint16_t	soft_controls;
@@ -48,6 +49,7 @@ uint32_t	foil_encoder_pulse_count = 0;
 uint16_t	g_pnevmo_pulse_duration = 2000;
 uint8_t		g_empty_bath_state = 0;
 uint8_t		g_encoder_on = 0;
+uint32_t	g_pl_state = 0;
 
 int main(void)
 {
@@ -90,7 +92,6 @@ int main(void)
 */	
 
 	lcd_init();
-	
 
 	for (;;)
 	{
@@ -116,6 +117,7 @@ void do_timer(void)
 	do_kbd();
 	do_sensor();
 	do_encoder();
+	do_pnevmoloaders();
 }
 
 void process_kbd()
@@ -767,4 +769,58 @@ void do_encoder(void)
 
 	}
 
+}
+
+#define PL_COUNT		(5)
+#define PL_ALARM_DELAY	(1000)
+
+void do_pnevmoloaders(void)
+{
+	static uint8_t	pl_id[] = {	SENSOR_E2P_EMPTY,
+								SENSOR_E2K_EMPTY,	
+								SENSOR_E3P_EMPTY,
+								SENSOR_E3K_EMPTY,
+								SENSOR_E3M_EMPTY};
+
+	static uint32_t pl_timer_count[PL_COUNT] = {0, 0, 0, 0, 0};
+
+	static uint8_t old_pl_state = 0;
+	uint8_t	pl_state;
+	
+	uint8_t	idx;
+	
+	for (idx = 0; idx < PL_COUNT; idx++)
+	{
+		if (TEST_SENSOR(pl_id[idx]))
+			SETBIT(pl_state, idx);
+		else
+			CLEARBIT(pl_state, idx);
+
+
+		if (TESTBIT(old_pl_state, idx) != TESTBIT(pl_state, idx))
+		{
+			if (TESTBIT(pl_state, idx))
+			{
+				SETBITL(g_pl_state, pl_id[idx]);
+				pl_timer_count[idx] = 0;
+				SETBIT(old_pl_state, idx);
+			}
+			else
+			{
+				pl_timer_count[idx] = 1;
+				CLEARBIT(old_pl_state, idx);
+			}
+		}
+	
+		if (pl_timer_count[idx])
+		{
+			if (pl_timer_count[idx] < PL_ALARM_DELAY)
+				pl_timer_count[idx]++;
+			else
+			{
+				pl_timer_count[idx] = 0;
+				CLEARBITL(g_pl_state, pl_id[idx]);
+			}
+		}
+	}	
 }

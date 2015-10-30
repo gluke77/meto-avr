@@ -13,6 +13,10 @@
 #define SETBIT(port, bit)	(port |= _BV(bit))
 #define CLEARBIT(port, bit)	(port &= ~(_BV(bit)))
 
+#define TESTBITL(port, bit)		((port) & (1L << (bit)))
+#define SETBITL(port, bit)		((port) |= (1L << (bit)))
+#define CLEARBITL(port, bit)	((port) &= ~(1L << (bit)))
+
 #define	EXT_MEM_INIT	{MCUCR = (1<<SRE);} // \
 			//			SETBIT(XMCRB, XMM0); \
 			//			SETBIT(XMCRB, XMM1); \
