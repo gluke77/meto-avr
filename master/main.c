@@ -653,6 +653,21 @@ void process_usb(void)
 //			usb_cmd(msg, 0, 0, 0);
 			break;
 			
+		case 0x0300:
+			YEAR = (uint8_t)(cmd.value[0] >> 8);
+			MONTH = (uint8_t)(cmd.value[0] & 0xFF);
+			break;
+			
+		case 0x0301:
+			D_MONTH = (uint8_t)(cmd.value[0] >> 8);
+			HOURS = (uint8_t)(cmd.value[0] & 0xFF);
+			break;
+			
+		case 0x0302:	
+			MINUTES = (uint8_t)(cmd.value[0] >> 8);
+			SECONDS = (uint8_t)(cmd.value[0] & 0xFF);
+			break;
+		
 		default:	
 			break;
 		}

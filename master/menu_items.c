@@ -49,7 +49,8 @@ void menu_items_init(void)
 	menu_items[MENU_MODE_LINK][3] = menu_work_pump;
 	menu_items[MENU_MODE_LINK][4] = menu_fillup_pump;
 	menu_items[MENU_MODE_LINK][5] = menu_debug;
-	menu_items[MENU_MODE_LINK][5] = menu_clock;
+	menu_items[MENU_MODE_LINK][6] = menu_clock;
+	menu_items[MENU_MODE_LINK][7] = menu_version;
 }
 
 void menu_common(void)
@@ -867,3 +868,9 @@ void menu_clock(void)
 	menu_common();
 }
 
+void menu_version(void)
+{
+	sprintf(lcd_line0, "бепяхъ он:      ");
+	sprintf(lcd_line1, "%-16s", FW_VERSION);
+	menu_common();
+}

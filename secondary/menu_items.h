@@ -26,6 +26,7 @@ void menu_tractor_lock(void);
 void menu_siren_mode(void);
 
 void menu_test(void);
+void menu_version(void);
 
 
 #endif /* _MENU_ITEMS_INCLUDED */

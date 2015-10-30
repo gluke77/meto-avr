@@ -38,5 +38,6 @@ void menu_work_pump(void);
 void menu_fillup_pump(void);
 void menu_debug(void);
 void menu_clock(void);
+void menu_version(void);
 
 #endif /* _MENU_ITEMS_INCLUDED */

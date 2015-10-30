@@ -35,7 +35,7 @@ void menu_items_init(void)
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_foil_led;
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_siren_mode;
 
-//	menu_items[MENU_MODE_TEST][0] = menu_test;
+	menu_items[MENU_MODE_VERSION][0] = menu_version;
 }
 
 void menu_common(void)
@@ -322,5 +322,12 @@ void menu_siren_mode(void)
 		beep_ms(50);
 	}
 	
+	menu_common();
+}
+
+void menu_version(void)
+{
+	sprintf(lcd_line0, "бепяхъ он:      ");
+	sprintf(lcd_line1, "%-16s", FW_VERSION);
 	menu_common();
 }
