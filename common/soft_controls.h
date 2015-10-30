@@ -21,22 +21,22 @@ extern uint8_t soft_controls;
 
 // PNEVMO
 
-#define SOFT_CONTROL_GERMO			(4)
+#define SOFT_CONTROL_COOLER_TUBE	(4)
 #define SOFT_CONTROL_PRESSURE		(5)
 #define SOFT_CONTROL_SG				(6)
 #define SOFT_CONTROL_DRIER			(7)
 //
 
-#define SOFT_CONTROL_STOP			(8)
+#define SOFT_CONTROL_GERMO			(8)
 
 // these are on secondary
 
 #if defined _MASTER
 
-#define SOFT_LAMP_STOP				(8) // igk: SOFT_CONTROL_STOP == SOFT_LAMP_STOP, I mean it
-
+#define SOFT_LAMP_GERMO				(8)
 #define SOFT_LAMP_PRESSURE			(9)
-#define SOFT_LAMP_GERMO				(10)
+
+#define SOFT_LAMP_STOP				(10) 
 
 #define SOFT_CONTROL_TRACTOR_LOCK	(11)
 #define SOFT_CONTROL_BUNKER_MOTOR	(12)
@@ -49,10 +49,10 @@ extern uint8_t soft_controls;
 
 #if defined _SECONDARY
 
-#define SOFT_LAMP_STOP				(0) // igk: SOFT_CONTROL_STOP == SOFT_LAMP_STOP, I mean it
+#define SOFT_LAMP_GERMO				(0) // igk: SOFT_CONTROL_GERMO == SOFT_LAMP_GERMO, I mean it
 
 #define SOFT_LAMP_PRESSURE			(1)
-#define SOFT_LAMP_GERMO				(2)
+#define SOFT_LAMP_STOP				(2)
 
 #define SOFT_CONTROL_TRACTOR_LOCK	(3)
 #define SOFT_CONTROL_BUNKER_MOTOR	(4)

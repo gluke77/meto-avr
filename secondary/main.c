@@ -77,8 +77,17 @@ int main(void)
 		process_usart();
 		process_soft_controls();
 		process_siren();
-		process_foil();
+		//process_foil();
 		//process_kbd();
+		
+		// simple process foil
+		
+		soft_sensors = sensors;
+		
+		if (TEST_SOFT_CONTROL(SOFT_CONTROL_BUNKER_MOTOR) &&
+			TEST_SENSOR(SENSOR_END_OF_FOIL))
+			
+			SOFT_CONTROL_OFF(SOFT_CONTROL_BUNKER_MOTOR);
 	}
 	return 0;
 }
@@ -166,7 +175,7 @@ void process_soft_controls(void)
 	{
 		old_soft_controls = soft_controls;
 		
-		controls &= 0xE0;
+		controls &= 0xC0;	// 0xE0 if you want pulse foil led
 		controls |= soft_controls;
 	}
 }

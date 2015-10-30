@@ -145,7 +145,7 @@ void process_soft_controls(void)
 
 	if (TEST_SOFT_CONTROL(SOFT_CONTROL_GERMO))
 	{
-		SOFT_CONTROL_ON(SOFT_LAMP_GERMO);
+		SOFT_CONTROL_ON(SOFT_LAMP_GERMO);	// SOFT_CONTROL_GERMO == SOFT_LAMP_GERMO
 		CONTROL_ON(CONTROL_GERMO_LOCK);
 		CONTROL_ON(CONTROL_GERMO_CARRIAGE);
 	}
@@ -190,28 +190,20 @@ void process_soft_controls(void)
 		CONTROL_OFF(CONTROL_DRIER_ON);
 		CONTROL_ON(CONTROL_DRIER_OFF);
 	}
-	
-	if (TEST_SOFT_CONTROL(SOFT_CONTROL_STOP))
-	{
-		CONTROL_ON(CONTROL_STOP);
-		SOFT_CONTROL_ON(SOFT_LAMP_STOP); // SOFT_CONTROL_STOP == SOFT_LAMP_STOP
-	}
+
+	if (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_TUBE))
+		CONTROL_ON(CONTROL_COOLER_TUBE);
 	else
-	{
-		CONTROL_OFF(CONTROL_STOP);
-		SOFT_CONTROL_OFF(SOFT_LAMP_STOP);
-	}
+		CONTROL_OFF(CONTROL_COOLER_TUBE);
 }
 
 void process_sensors(void)
 {
 	static uint8_t	pressure_state = 0;
 	
-	static uint16_t old_sensors = 0;
-	static uint16_t old_secondary_sensors = 0;
-	
-	uint16_t new_sensors;
-	uint16_t new_secondary_sensors;
+	static uint16_t old_sensors[2] = {0, 0};
+		
+	uint16_t new_sensors[2];
 	
 	modbus_cmd_s	cmd;
 	uint8_t			msg[MODBUS_MAX_MSG_LENGTH];
@@ -223,7 +215,9 @@ void process_sensors(void)
 		SOFT_CONTROL_OFF(SOFT_CONTROL_GERMO);
 
 	if (TEST_SENSOR(BUTTON_STOP))
-		SOFT_CONTROL_ON(SOFT_CONTROL_STOP);
+	{
+		// PROCESS STOP HERE
+	}
 	
 	if (TEST_SENSOR(BUTTON_BATH_PRESSURE) && (0 == pressure_state))
 		pressure_state = 1;
@@ -241,20 +235,20 @@ void process_sensors(void)
 	// todo : process SENSOR_FOIL_ENCODER_HERE
 	
 
-	new_sensors = ((uint16_t)sensors[0]) | ((uint16_t)sensors[1] << 1);
-	new_secondary_sensors = (uint16_t)secondary_sensors;
+	new_sensors[0] = ((uint16_t)sensors[0]) | ((uint16_t)sensors[1] << 8);
+	new_sensors[1] = ((uint16_t)sensors[2]) | ((uint16_t)secondary_sensors << 8);
 	
-	if ((new_sensors != old_sensors) || (new_secondary_sensors != old_secondary_sensors))
+	if ((new_sensors[0] != old_sensors[0]) || (new_sensors[1] != old_sensors[1]))
 	{
-		old_sensors = new_sensors;
-		old_secondary_sensors = new_secondary_sensors;
+		old_sensors[0] = new_sensors[0];
+		old_sensors[1] = new_sensors[1];
 
 		cmd.device_id = master_device_id;
 		cmd.cmd_code = MODBUS_READ;
 		cmd.cmd_type = MODBUS_ACK;
 		cmd.addr = 2;
-		cmd.value[0] = new_sensors;
-		cmd.value[1] = new_secondary_sensors;
+		cmd.value[0] = new_sensors[0];
+		cmd.value[1] = new_sensors[1];
 		
 		modbus_cmd2msg(&cmd, msg, MODBUS_MAX_MSG_LENGTH);
 		usb_cmd(msg, 0, 0, 0);
@@ -305,7 +299,7 @@ void process_secondary(void)
 		if (RESULT_OK == res)
 		{
 			soft_controls &= 0x01FF;
-			soft_controls |= cmd.value[0] & 0xFE00;
+			soft_controls |= cmd.value[0] & 0xFC00;
 		
 			secondary_sensors = (uint8_t)(cmd.value[0] & 0x00FF);
 		
@@ -457,8 +451,8 @@ void process_usb(void)
 			cmd.addr = 3;
 			cmd.value[0] = soft_controls;
 			cmd.value[1] = ((uint16_t)sensors[0]) | ((uint16_t)sensors[1] << 8);
-			cmd.value[2] = (uint16_t)secondary_sensors;
-		
+			cmd.value[2] = ((uint16_t)sensors[2]) | ((uint16_t)secondary_sensors << 8);
+
 			modbus_cmd2msg(&cmd, msg, MODBUS_MAX_MSG_LENGTH);
 			usb_cmd(msg, 0, 0, 0);
 		}
@@ -470,19 +464,19 @@ void process_usb(void)
 		case 0x0000:
 			soft_controls = cmd.value[0];
 			modbus_cmd2msg(&cmd, msg, MODBUS_MAX_MSG_LENGTH);
-			usb_cmd(msg, 0, 0, 0);
+//			usb_cmd(msg, 0, 0, 0);
 			break;
 			
 		case 0x0100:
 			soft_controls |= cmd.value[0];
 			modbus_cmd2msg(&cmd, msg, MODBUS_MAX_MSG_LENGTH);
-			usb_cmd(msg, 0, 0, 0);
+//			usb_cmd(msg, 0, 0, 0);
 			break;
 
 		case 0x0200:
 			soft_controls &= ~cmd.value[0];
 			modbus_cmd2msg(&cmd, msg, MODBUS_MAX_MSG_LENGTH);
-			usb_cmd(msg, 0, 0, 0);
+//			usb_cmd(msg, 0, 0, 0);
 			break;
 			
 		default:	

@@ -14,6 +14,7 @@
 #include "shift.h"
 #include "../common/beep.h"
 #include "usb.h"
+#include "../common/meto.h"
 
 void menu_items_init(void)
 {
@@ -35,7 +36,7 @@ void menu_items_init(void)
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_pressure;
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_sg;
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_drier;
-	menu_items[MENU_MODE_CONTROLS][idx++] = menu_stop;
+	menu_items[MENU_MODE_CONTROLS][idx++] = menu_cooler_tube;
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_foil_led;
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_bunker_motor;
 	menu_items[MENU_MODE_CONTROLS][idx++] = menu_tractor_lock;
@@ -288,6 +289,8 @@ void menu_sensors(void)
 	menu_common();
 }
 
+// TODO: update scan sensors
+
 char * sensor_text[][3] =
 	{
 		{"бндю б бюммни-0  ", "дю", "мер"},
@@ -303,20 +306,54 @@ char * sensor_text[][3] =
 		{"ймнойю цеплерхг. ", "дю", "мер"},
 		{"ймнойю ярно      ", "дю", "мер"},
 		{"щмйндеп          ", "дю", "мер"},
-		{"дюбкемхе         ", "дю", "мер"},
+		{"бнгдсу б рпсае   ", "дю", "мер"},
 		{"яц ондмърю       ", "дю", "мер"},
 		{"яц носыемю       ", "дю", "мер"},
-		{"напшб тнкэцх     ", "дю", "мер"},
-		{"йнмеж ням. анахмш", "дю", "мер"},
-		{"йнмеж дно. анахмш", "дю", "мер"}
+		{"ого щ2           ", "дю", "мер"},
+		{"огй щ2           ", "дю", "мер"},
+		{"ого щ3           ", "дю", "мер"},
+		{"огй щ3           ", "дю", "мер"},
+		{"огл щ3           ", "дю", "мер"},
+		{"йнмеж тнкэцх     ", "дю", "мер"},
+		{"гюлемю анахмш    ", "дю", "мер"},
+		{"ялнрйю тнкэцх    ", "дю", "мер"}
 	};
 
+#define SENSOR_COUNT	(24)
+
+uint8_t	sensor_id[] =
+	{
+		SENSOR_BATH_WATER_LEVEL0,
+		SENSOR_BATH_WATER_LEVEL1,
+		SENSOR_TANK_WATER_LEVEL0,
+		SENSOR_TANK_WATER_LEVEL1,
+		SENSOR_HEAD_WATER,
+		SENSOR_E2_WATER,
+		SENSOR_E3_WATER,
+		SENSOR_GERMO_BEGIN,
+		SENSOR_GERMO_END,
+		BUTTON_BATH_PRESSURE,
+		BUTTON_BATH_GERMO,
+		BUTTON_STOP,
+		SENSOR_FOIL_ENCODER,
+		SENSOR_PRESSURE,
+		SENSOR_HEAD_UP,
+		SENSOR_HEAD_DOWN,
+		SENSOR_E2P_EMPTY,
+		SENSOR_E2K_EMPTY,
+		SENSOR_E3P_EMPTY,
+		SENSOR_E3K_EMPTY,
+		SENSOR_E3M_EMPTY,
+		SENSOR_END_OF_FOIL,
+		SENSOR_PRI_REEL,
+		SENSOR_SEC_REEL
+	};
 
 
 void menu_scan_sensors(void)
 {
 	static uint8_t scan_mode_on = 1;
-	static uint8_t sensor_id = 0;
+	static uint8_t sensor = 0;
 	static uint8_t timer_id = 0;
 	
 	if (KEY_PRESSED(KEY_ENTER))
@@ -338,21 +375,21 @@ void menu_scan_sensors(void)
 			timer_id = 0;
 			
 			if (scan_mode_on)
-				sensor_id++;
+				sensor++;
 			
-			if (18 < sensor_id)
-				sensor_id = 0;
+			if (SENSOR_COUNT <= sensor)
+				sensor = 0;
 		}
 	}
 
-	sprintf(lcd_line0, "%s               ", sensor_text[sensor_id][0]);
+	sprintf(lcd_line0, "%s               ", sensor_text[sensor][0]);
 		
-	if (sensor_id < 16)
+	if (sensor_id[sensor] < 24)
 		sprintf(lcd_line1, "%s               ",
-			(TEST_SENSOR(sensor_id))?sensor_text[sensor_id][1]:sensor_text[sensor_id][2]);
+			(TEST_SENSOR(sensor_id[sensor]))?sensor_text[sensor][1]:sensor_text[sensor][2]);
 	else 
 		sprintf(lcd_line1, "%s               ",
-			(TESTBIT(secondary_sensors, sensor_id - 16))?sensor_text[sensor_id][1]:sensor_text[sensor_id][2]);
+			(TESTBIT(secondary_sensors, sensor_id[sensor] - 24))?sensor_text[sensor][1]:sensor_text[sensor][2]);
 
 	menu_common();
 }
@@ -368,19 +405,21 @@ void menu_controls(void)
 	
 	lcd_line1[SOFT_CONTROL_COOLER_PUMP] = (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_PUMP))?'у':'.';
 	lcd_line1[SOFT_CONTROL_EXTRUDER_PUMP] = (TEST_SOFT_CONTROL(SOFT_CONTROL_EXTRUDER_PUMP))?'щ':'.';
-	lcd_line1[SOFT_CONTROL_GERMO] = (TEST_SOFT_CONTROL(SOFT_CONTROL_GERMO))?'ц':'.';
-	lcd_line1[SOFT_CONTROL_PRESSURE] = (TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))?'д':'.';
+	lcd_line1[SOFT_CONTROL_COOLER_TUBE] = (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_TUBE))?'о':'.';
+	lcd_line1[SOFT_CONTROL_PRESSURE] = (TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))?'б':'.';
 	lcd_line1[SOFT_CONTROL_SG] = (TEST_SOFT_CONTROL(SOFT_CONTROL_SG))?'я':'.';
 	lcd_line1[SOFT_CONTROL_DRIER] = (TEST_SOFT_CONTROL(SOFT_CONTROL_DRIER))?'н':'.';
-	lcd_line1[SOFT_CONTROL_STOP] = (TEST_SOFT_CONTROL(SOFT_CONTROL_STOP))?'S':'.';
-	lcd_line1[SOFT_CONTROL_FOIL_LED - 2] = (TEST_SOFT_CONTROL(SOFT_CONTROL_FOIL_LED))?'к':'.';
-	lcd_line1[SOFT_CONTROL_BUNKER_MOTOR - 2] = (TEST_SOFT_CONTROL(SOFT_CONTROL_BUNKER_MOTOR))?'а':'.';
-	lcd_line1[SOFT_CONTROL_TRACTOR_LOCK - 2] = (TEST_SOFT_CONTROL(SOFT_CONTROL_TRACTOR_LOCK))?'о':'.';
-		
-	lcd_line1[SOFT_SIREN_MODE0 - 2] = ' ';
-	lcd_line1[SOFT_SIREN_MODE1 - 2] = '0' + GET_SIREN_MODE;
+	lcd_line1[SOFT_CONTROL_GERMO] = (TEST_SOFT_CONTROL(SOFT_CONTROL_GERMO))?'ц':'.';
 	
-	lcd_line1[14] = ' ';
+	lcd_line1[SOFT_LAMP_STOP - 1] = (TEST_SOFT_CONTROL(SOFT_LAMP_STOP))?'S':'.';
+	lcd_line1[SOFT_CONTROL_FOIL_LED - 1] = (TEST_SOFT_CONTROL(SOFT_CONTROL_FOIL_LED))?'к':'.';
+	lcd_line1[SOFT_CONTROL_BUNKER_MOTOR - 1] = (TEST_SOFT_CONTROL(SOFT_CONTROL_BUNKER_MOTOR))?'а':'.';
+	lcd_line1[SOFT_CONTROL_TRACTOR_LOCK - 1] = (TEST_SOFT_CONTROL(SOFT_CONTROL_TRACTOR_LOCK))?'р':'.';
+	
+	
+	lcd_line1[SOFT_SIREN_MODE0 - 1] = ' ';
+	lcd_line1[SOFT_SIREN_MODE1 - 1] = '0' + GET_SIREN_MODE;
+	
 	lcd_line1[15] = ' ';
 	
 	menu_common();
@@ -474,9 +513,9 @@ void menu_germo(void)
 
 void menu_pressure(void)
 {	
-	sprintf(lcd_line0,"дюбкемхе        ");
+	sprintf(lcd_line0,"бнгдсу б рпсае  ");
 	sprintf(lcd_line1,"%s                ", 
-		(TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))?"бйкчвемн":"бшйкчвемн");
+		(TEST_SOFT_CONTROL(SOFT_CONTROL_PRESSURE))?"бйкчвем":"бшйкчвем");
 		
 	if (KEY_PRESSED(KEY_ENTER))
 	{
@@ -535,20 +574,20 @@ void menu_drier(void)
 	menu_common();
 }
 
-void menu_stop(void)
+void menu_cooler_tube(void)
 {	
-	sprintf(lcd_line0,"яхцмюк 'ярно'   ");
+	sprintf(lcd_line0,"опедб.нукюфдемхе");
 	sprintf(lcd_line1,"%s                ", 
-		(TEST_SOFT_CONTROL(SOFT_CONTROL_STOP))?"бйкчвем":"бшйкчвем");
+		(TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_TUBE))?"бйкчвемн":"бшйкчвемн");
 		
 	if (KEY_PRESSED(KEY_ENTER))
 	{
 		CLEAR_KEY_PRESSED(KEY_ENTER);
 		
-		if (TEST_SOFT_CONTROL(SOFT_CONTROL_STOP))
-			SOFT_CONTROL_OFF(SOFT_CONTROL_STOP);
+		if (TEST_SOFT_CONTROL(SOFT_CONTROL_COOLER_TUBE))
+			SOFT_CONTROL_OFF(SOFT_CONTROL_COOLER_TUBE);
 		else
-			SOFT_CONTROL_ON(SOFT_CONTROL_STOP);
+			SOFT_CONTROL_ON(SOFT_CONTROL_COOLER_TUBE);
 			
 		beep_ms(50);
 	}

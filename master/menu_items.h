@@ -24,7 +24,7 @@ void menu_germo(void);
 void menu_pressure(void);
 void menu_sg(void);
 void menu_drier(void);
-void menu_stop(void);
+void menu_cooler_tube(void);
 void menu_foil_led(void);
 void menu_bunker_motor(void);
 void menu_tractor_lock(void);
