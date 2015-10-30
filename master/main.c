@@ -161,9 +161,14 @@ void process_soft_controls(void)
 	{
 		if (TEST_SENSOR(SENSOR_GERMO_BEGIN))
 		{
-			SOFT_CONTROL_ON(SOFT_LAMP_GERMO);	// SOFT_CONTROL_GERMO == SOFT_LAMP_GERMO
-			CONTROL_ON(CONTROL_GERMO_LOCK);
-			CONTROL_ON(CONTROL_GERMO_CARRIAGE);
+			if (TEST_SENSOR(SENSOR_BATH_WATER_LEVEL1))
+			{
+				SOFT_CONTROL_ON(SOFT_LAMP_GERMO);	// SOFT_CONTROL_GERMO == SOFT_LAMP_GERMO
+				CONTROL_ON(CONTROL_GERMO_LOCK);
+				CONTROL_ON(CONTROL_GERMO_CARRIAGE);
+			}
+			else
+				SOFT_CONTROL_OFF(SOFT_CONTROL_GERMO);
 		}
 	}
 	else
@@ -300,7 +305,8 @@ void process_sensors(void)
 	modbus_cmd_s	cmd;
 	uint8_t			msg[MODBUS_MAX_MSG_LENGTH];
 
-	if (TEST_SENSOR(BUTTON_BATH_GERMO) && TEST_SENSOR(SENSOR_GERMO_BEGIN))
+	if (TEST_SENSOR(BUTTON_BATH_GERMO) &&
+		TEST_SENSOR(SENSOR_GERMO_BEGIN))
 		SOFT_CONTROL_ON(SOFT_CONTROL_GERMO);
 
 	if (TEST_SENSOR(SENSOR_GERMO_END))
@@ -313,6 +319,14 @@ void process_sensors(void)
 		SOFT_CONTROL_ON(SOFT_CONTROL_GERMO);
 		if (2 == GET_WATER_MODE)
 			SET_WATER_MODE(1);
+	}
+	
+	if (!TEST_SENSOR(SENSOR_TANK_WATER_LEVEL1))
+	{
+		CONTROL_OFF(CONTROL_WORK_BATH_PUMP);
+		CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
+		CONTROL_OFF(CONTROL_COOLER_PUMP);
+		CONTROL_OFF(CONTROL_EXTRUDER_PUMP);
 	}
 	
 	if (TEST_SENSOR(BUTTON_BATH_PRESSURE) && (0 == pressure_state))
@@ -435,6 +449,7 @@ void process_water(void)
 	
 	static uint8_t old_empty_bath_state = 1;
 	static uint8_t empty_bath_timer_id = 0;
+	static uint8_t level_reached = 0;
 
 	uint8_t water_mode = GET_WATER_MODE;
 	
@@ -466,6 +481,8 @@ void process_water(void)
 				water_action = WATER_ACTION_FILLUP;		
 			break;
 		}
+		
+		level_reached = 0;
 	}	
 		
 	switch (water_mode)
@@ -486,7 +503,10 @@ void process_water(void)
 			water_action = WATER_ACTION_EMPTY;
 	
 		if ((WATER_ACTION_FILLUP == water_action) && TEST_SENSOR(SENSOR_BATH_WATER_LEVEL0))
+		{
 			water_action = WATER_ACTION_NOP;
+			level_reached = 1;
+		}
 
 		break;
 			
@@ -495,7 +515,10 @@ void process_water(void)
 			water_action = WATER_ACTION_FILLUP;
 
 		if ((WATER_ACTION_FILLUP == water_action) && TEST_SENSOR(SENSOR_BATH_WATER_LEVEL1))
+		{
 			water_action = WATER_ACTION_NOP;
+			level_reached = 1;
+		}
 				
 		break;
 	}
@@ -504,13 +527,20 @@ void process_water(void)
 	{
 	case WATER_ACTION_NOP:
 		CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
-		CONTROL_ON(CONTROL_WORK_BATH_PUMP);
+		CONTROL_OFF(CONTROL_WORK_BATH_PUMP);
 		g_empty_bath_state = 0;
 		break;
 
 	case WATER_ACTION_FILLUP:
-		CONTROL_ON(CONTROL_FILLUP_BATH_PUMP);
-		CONTROL_ON(CONTROL_WORK_BATH_PUMP);
+		if (level_reached)
+			CONTROL_OFF(CONTROL_FILLUP_BATH_PUMP);
+		else
+			if (TEST_SENSOR(SENSOR_TANK_WATER_LEVEL1))
+				CONTROL_ON(CONTROL_FILLUP_BATH_PUMP);
+
+		if (TEST_SENSOR(SENSOR_TANK_WATER_LEVEL1))
+			CONTROL_ON(CONTROL_WORK_BATH_PUMP);
+		
 		g_empty_bath_state = 0;
 		break;
 
