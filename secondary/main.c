@@ -67,7 +67,7 @@ int main(void)
 
 	for (;;)
 	{
-		do_kbd();
+		//do_kbd();
 		do_lcd();
 		do_shift();
 		do_sensor();
@@ -101,7 +101,8 @@ int main(void)
 
 void do_timer(void)
 {
-//	do_kbd();
+	do_kbd();
+//	do_sensor();
 }
 
 #define CMD_NOP			(0)
@@ -138,7 +139,7 @@ void process_cmd(modbus_cmd_s * cmd)
 
 	modbus_cmd2msg(cmd, msg, MODBUS_MAX_MSG_LENGTH);
 	
-	delay_ms(10);
+	_delay_ms(10);
 	
 	usart0_cmd(msg, 0, 0, 0);
 }

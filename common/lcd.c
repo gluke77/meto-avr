@@ -1,6 +1,9 @@
 #include "common.h"
 #include "lcd.h"
 
+#define LCD_LATCH_DELAY_US	(3)
+#define LCD_SHORT_DELAY_US	(1)
+
 char lcd_line0[40];
 char lcd_line1[40];
 
@@ -38,9 +41,9 @@ void lcd_write_cmd(uint8_t cmd)
 #endif /* _SECONDARY */	
 	LCD_CMD_PORT = cmd;
 #if defined _SECONDARY	
-	_delay_us(1);
+	_delay_us(LCD_SHORT_DELAY_US);
 	LCD_LATCH_ON;
-	_delay_us(10);
+	_delay_us(LCD_LATCH_DELAY_US);
 	LCD_LATCH_OFF;
 #endif /* _SECONDARY */	
 	_delay_ms(10);
@@ -55,9 +58,9 @@ void lcd_write_data_(uint8_t data)
 #endif /* _SECONDARY */
 	LCD_DATA_PORT = data;
 #if defined _SECONDARY
-	_delay_us(1);
+	_delay_us(LCD_SHORT_DELAY_US);
 	LCD_LATCH_ON;
-	_delay_us(10);
+	_delay_us(LCD_LATCH_DELAY_US);
 	LCD_LATCH_OFF;
 #endif /* _SECONDARY */
 	_delay_ms(1);

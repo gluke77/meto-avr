@@ -131,6 +131,7 @@ void menu_scan_sensors(void)
 		if (KEY_PRESSED(KEY_UP))
 		{
 			CLEAR_KEY_PRESSED(KEY_UP);
+			beep_ms(50);
 			
 			if (0 == sensor_id)
 				sensor_id = SENSOR_COUNT;
@@ -141,6 +142,7 @@ void menu_scan_sensors(void)
 		if (KEY_PRESSED(KEY_DOWN))
 		{
 			CLEAR_KEY_PRESSED(KEY_DOWN);
+			beep_ms(50);
 			
 			sensor_id++;
 			

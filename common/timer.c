@@ -51,10 +51,12 @@ ISR(TIMER0_COMP_vect)
 uint16_t timer_value(uint8_t timer_id)
 {
 	uint16_t	value;
+	uint8_t		sreg;
 	
+	sreg = SREG;
 	GLOBAL_INT_DISABLE;
 	value = (timer_id < TIMER_COUNT)?timers[timer_id]:0;
-	GLOBAL_INT_ENABLE;
+	SREG = sreg;
 
 	return value;
 }
