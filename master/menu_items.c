@@ -272,8 +272,8 @@ extern uint8_t secondary_sensors;
 
 void menu_start(void)
 {
-	sprintf(lcd_line0, "лерюккнонкхлеп-4");
-	sprintf(lcd_line1, "ло123-2006      ");
+	sprintf(lcd_line0, "лерюккнонкхлеп-5");
+	sprintf(lcd_line1, "лор 125         ");
 	
 	menu_common();
 }
