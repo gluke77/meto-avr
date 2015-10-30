@@ -35,6 +35,7 @@ void process_usb(void);
 void process_soft_controls(void);
 void process_water(void);
 void process_encoder_counter(void);
+void report_changes(void);
 
 void do_encoder(void);
 void do_pnevmoloaders(void);
@@ -98,7 +99,7 @@ int main(void)
 		process_sensors();
 		process_soft_controls();
 		process_water();
-//		do_sensor();
+		report_changes();
 		do_shift();
 		do_lcd();
 
@@ -300,13 +301,6 @@ void process_sensors(void)
 {
 	static uint8_t	pressure_state = 0;
 	
-	static uint16_t old_sensors[2] = {0, 0};
-		
-	uint16_t new_sensors[2];
-	
-	modbus_cmd_s	cmd;
-	uint8_t			msg[MODBUS_MAX_MSG_LENGTH];
-
 	if (TEST_SENSOR(BUTTON_BATH_GERMO) &&
 		TEST_SENSOR(SENSOR_GERMO_BEGIN))
 		SOFT_CONTROL_ON(SOFT_CONTROL_GERMO);
@@ -344,27 +338,6 @@ void process_sensors(void)
 			SOFT_CONTROL_ON(SOFT_CONTROL_PRESSURE);
 	}
 	
-	// todo : process SENSOR_FOIL_ENCODER_HERE
-	
-
-	new_sensors[0] = ((uint16_t)sensors[0]) | ((uint16_t)sensors[1] << 8);
-	new_sensors[1] = ((uint16_t)sensors[2]) | ((uint16_t)secondary_sensors << 8);
-	
-	if ((new_sensors[0] != old_sensors[0]) || (new_sensors[1] != old_sensors[1]))
-	{
-		old_sensors[0] = new_sensors[0];
-		old_sensors[1] = new_sensors[1];
-
-		cmd.device_id = master_device_id;
-		cmd.cmd_code = MODBUS_READ;
-		cmd.cmd_type = MODBUS_ACK;
-		cmd.addr = 2;
-		cmd.value[0] = new_sensors[0];
-		cmd.value[1] = new_sensors[1];
-		
-		modbus_cmd2msg(&cmd, msg, MODBUS_MAX_MSG_LENGTH);
-		usb_cmd(msg, 0, 0, 0);
-	}
  }
 
 ////////////////////////////////////////////////////
@@ -782,3 +755,40 @@ void do_pnevmoloaders(void)
 		}
 	}	
 }
+
+void report_changes(void)
+{
+	modbus_cmd_s	cmd;
+	uint8_t			msg[MODBUS_MAX_MSG_LENGTH];
+
+	static uint16_t old_soft_controls = 0;
+	static uint16_t old_sensors[2] = {0, 0};
+	
+	uint16_t	new_soft_controls;
+	uint16_t	new_sensors[2];
+
+	new_soft_controls = soft_controls;
+	new_sensors[0] = ((uint16_t)sensors[0]) | ((uint16_t)sensors[1] << 8);
+	new_sensors[1] = ((uint16_t)sensors[2]) | ((uint16_t)secondary_sensors << 8);
+	
+	if ((new_sensors[0] != old_sensors[0]) || 
+		(new_sensors[1] != old_sensors[1]) ||
+		(new_soft_controls != old_soft_controls))
+	{
+		cmd.device_id = master_device_id;
+		cmd.cmd_code = MODBUS_READ;
+		cmd.cmd_type = MODBUS_ACK;
+		cmd.addr = 3;
+		cmd.value[0] = new_soft_controls;
+		cmd.value[1] = new_sensors[0];
+		cmd.value[2] = new_sensors[1];
+
+		modbus_cmd2msg(&cmd, msg, MODBUS_MAX_MSG_LENGTH);
+		usb_cmd(msg, 0, 0, 0);
+	}
+
+	old_soft_controls = new_soft_controls;
+	old_sensors[0] = new_sensors[0];
+	old_sensors[1] = new_sensors[1];
+}
+
